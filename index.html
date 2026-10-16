@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>VidEmbed Studio — Universal Video Player & Embed Platform</title>
+  <meta name="description" content="Production-grade universal video player powered by WebCodecs & FFmpeg WASM. Play MKV, MP4, AVI, WebM, HLS and generate instant embed links." />
+  <link rel="icon" type="image/png" href="/assets/img/fav.png" />
+  <link rel="apple-touch-icon" href="/assets/img/fav.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-container">
+      <a href="/" class="brand-wrapper">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text-col">
+          <div class="brand-name">Vid<span>Embed</span></div>
+          <div class="brand-tagline">A SumanOnline Project</div>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="/docs" class="nav-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span class="nav-text-desktop">API Docs</span>
+          <span class="nav-text-mobile">Docs</span>
+        </a>
+        <a href="/test-embed" class="nav-btn nav-btn-hide-mobile">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          <span>Demo</span>
+        </a>
+        <a href="/embed?url=https://lorem.video/720p.mp4&title=720p+Test+Video" target="_blank" rel="noopener" class="nav-btn primary">
+          <span class="nav-text-desktop">Launch Embed</span>
+          <span class="nav-text-mobile">Embed</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="app-wrapper">
+    <header class="hero-banner">
+      <h1 class="hero-heading">Play Any Video Format. <span>Embed Anywhere.</span></h1>
+      <p class="hero-subheading">Hardware-accelerated playback for MKV, MP4, AVI, WebM, and HLS without server transcoding. Generate production-ready iframe embeds, URL parameter links, and JavaScript SDK controls.</p>
+      <div class="format-tags-row">
+        <span class="format-chip active">MKV (Matroska)</span>
+        <span class="format-chip active">MP4 (H.264 / HEVC)</span>
+        <span class="format-chip active">AVI (DivX / Xvid)</span>
+        <span class="format-chip active">WebM (VP9 / AV1)</span>
+        <span class="format-chip active">HLS (.m3u8)</span>
+        <span class="format-chip active">MPEG-TS (.ts)</span>
+        <span class="format-chip active">DASH (.mpd)</span>
+      </div>
+    </header>
+
+    <section class="studio-stage-card">
+      <div class="input-toolbar">
+        <div class="input-flex-row">
+          <div class="url-input-container">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="10 8 16 12 10 16 10 8"></polygon>
+            </svg>
+            <input
+              type="url"
+              id="source-url-input"
+              class="stream-url-field"
+              placeholder="Paste any stream URL (MKV, MP4, AVI, WebM, HLS m3u8, TS)..."
+              value=""
+            />
+          </div>
+          <button id="load-url-btn" class="btn-action btn-load">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Play Stream</span>
+          </button>
+          <div class="file-input-wrapper">
+            <button class="btn-action btn-file-select">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span>Local File</span>
+            </button>
+            <input type="file" id="local-file-input" accept="video/*,.mkv,.ts,.avi,.webm,.mp4" />
+          </div>
+        </div>
+
+        <div class="presets-container">
+          <span class="presets-title">Sample Presets:</span>
+          <div class="presets-scroll-track">
+            <button class="preset-chip-btn" data-url="https://lorem.video/720p.mp4" data-title="Bunny 720p Standard" data-poster="https://lorem.video/web/img/bunny-thumb.webp">
+              <span class="preset-badge-tag">720P</span>
+              <span>Bunny Sample</span>
+            </button>
+            <button class="preset-chip-btn" data-url="https://lorem.video/cat.mp4" data-title="Cat Playing 1080p" data-poster="https://lorem.video/web/img/cat-thumb.webp">
+              <span class="preset-badge-tag">1080P</span>
+              <span>Cat Playing</span>
+            </button>
+            <button class="preset-chip-btn" data-url="https://lorem.video/corgi.mp4" data-title="Corgi Phoebe" data-poster="https://lorem.video/web/img/corgi-thumb.webp">
+              <span class="preset-badge-tag">HD</span>
+              <span>Corgi Phoebe</span>
+            </button>
+            <button class="preset-chip-btn" data-url="https://lorem.video/test.mp4" data-title="FFmpeg Color Bars Test" data-poster="https://lorem.video/web/img/test-thumb.webp">
+              <span class="preset-badge-tag">SMPTE</span>
+              <span>Color Bars</span>
+            </button>
+            <button class="preset-chip-btn" data-url="https://lorem.video/720p_av1.mp4" data-title="Next-Gen AV1 Stream">
+              <span class="preset-badge-tag">AV1</span>
+              <span>AV1 Codec</span>
+            </button>
+            <button class="preset-chip-btn" data-url="https://lorem.video/test_1080p_vp9.webm" data-title="WebM VP9 High Definition">
+              <span class="preset-badge-tag">WebM</span>
+              <span>VP9 Matrix</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="player-cinema-stage">
+        <div id="ambient-glow-layer"></div>
+        <movi-player
+          id="main-stage-player"
+          renderer="canvas"
+          controls
+          playsinline
+          fastseek
+          objectfit="control"
+          showtitle
+          ambientmode
+          ambientwrapper="ambient-glow-layer"
+          poster="/assets/img/image.png"
+          wasmurl="/movi.wasm"
+        ></movi-player>
+        <div class="player-standby-overlay" id="stage-standby-overlay">
+          <div class="standby-card">
+            <div class="standby-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </div>
+            <div class="standby-title">Ready to Stream</div>
+            <div class="standby-hint">Paste a video stream URL above or click any sample preset below to start playback</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="telemetry-strip">
+        <div class="telemetry-cell">
+          <span class="lbl">Engine</span>
+          <span class="val" id="telemetry-engine">Hardware Accelerated</span>
+        </div>
+        <div class="telemetry-cell">
+          <span class="lbl">Stream Format</span>
+          <span class="val" id="telemetry-format">Auto-detect</span>
+        </div>
+        <div class="telemetry-cell">
+          <span class="lbl">Player Status</span>
+          <span class="val" id="telemetry-status">Ready</span>
+        </div>
+        <div class="telemetry-cell">
+          <span class="lbl">Playback Timeline</span>
+          <span class="val" id="telemetry-time">00:00 / 00:00</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="suite-grid">
+      <div class="suite-card">
+        <div>
+          <div class="card-top">
+            <h2 class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+              <span>Embed Customizer</span>
+            </h2>
+            <div class="mode-segmented-control">
+              <button class="mode-segment-btn active" id="mode-pill-url">URL Mode</button>
+              <button class="mode-segment-btn" id="mode-pill-api">API SDK Mode</button>
+            </div>
+          </div>
+
+          <div class="options-block">
+            <div class="toggles-2col">
+              <div class="toggle-row">
+                <span>Autoplay</span>
+                <label class="switch">
+                  <input type="checkbox" id="cfg-autoplay">
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <span>Muted</span>
+                <label class="switch">
+                  <input type="checkbox" id="cfg-muted">
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <span>Controls</span>
+                <label class="switch">
+                  <input type="checkbox" id="cfg-controls" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <span>Loop</span>
+                <label class="switch">
+                  <input type="checkbox" id="cfg-loop">
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <span>Ambient Glow</span>
+                <label class="switch">
+                  <input type="checkbox" id="cfg-ambient" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <span>Theme</span>
+                <select id="cfg-theme" class="field-input" style="width: auto; padding: 4px 10px; height: 32px;">
+                  <option value="dark" selected>Dark</option>
+                  <option value="light">Light</option>
+                  <option value="midnight">Midnight</option>
+                  <option value="cyberpunk">Cyberpunk</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="cfg-title" class="field-label">Display Title</label>
+              <input type="text" id="cfg-title" class="field-input" placeholder="Title shown in player header..." value="" />
+            </div>
+
+            <div class="field-group">
+              <label for="cfg-poster" class="field-label">Poster Thumbnail URL (Optional)</label>
+              <input type="url" id="cfg-poster" class="field-input" placeholder="/assets/img/image.png (Default)" />
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Accent Color</label>
+              <div class="color-picker-row">
+                <input type="color" id="cfg-accent" value="#6366f1" class="color-input-native" />
+                <input type="text" id="cfg-accent-text" class="field-input" value="#6366f1" style="flex: 1;" />
+                <div class="color-presets-row">
+                  <div class="color-dot-preset" style="background: #6366f1;" data-color="#6366f1"></div>
+                  <div class="color-dot-preset" style="background: #06b6d4;" data-color="#06b6d4"></div>
+                  <div class="color-dot-preset" style="background: #10b981;" data-color="#10b981"></div>
+                  <div class="color-dot-preset" style="background: #f43f5e;" data-color="#f43f5e"></div>
+                  <div class="color-dot-preset" style="background: #a855f7;" data-color="#a855f7"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="suite-card">
+        <div style="display:flex; flex-direction:column; height: 100%;">
+          <div class="card-top">
+            <h2 class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              <span>Generated Code</span>
+            </h2>
+            <div class="tab-buttons-list">
+              <button class="tab-btn active" data-tab="iframe">Iframe Code</button>
+              <button class="tab-btn" data-tab="url">Direct Link</button>
+              <button class="tab-btn" data-tab="sdk">JS SDK</button>
+              <button class="tab-btn" data-tab="base64">Base64 URL</button>
+            </div>
+          </div>
+
+          <div class="code-viewer-shell">
+            <div class="code-tabs-nav">
+              <span style="font-size: 11px; font-weight: 700; color: var(--text-subtle); letter-spacing: 0.05em; text-transform: uppercase;" id="active-tab-label">Responsive Iframe Snippet</span>
+              <button class="btn-copy-code" id="copy-code-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Code</span>
+              </button>
+            </div>
+            <pre class="code-display-block" id="generated-code-display"></pre>
+          </div>
+
+          <div class="sandbox-action-bar">
+            <button class="btn-sandbox-open" id="open-sandbox-modal-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+              </svg>
+              <span>Test Embed in Live Sandbox</span>
+            </button>
+            <a href="/docs" class="nav-btn" style="padding: 0;">
+              <span>View Full API Specs &rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="tech-grid">
+      <div class="tech-box">
+        <div class="tech-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <h3 class="tech-title">Hardware Acceleration</h3>
+        <p class="tech-desc">GPU-accelerated video decoding pipeline delivers smooth 60fps playback with minimal battery and CPU usage.</p>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h3 class="tech-title">Universal Container Support</h3>
+        <p class="tech-desc">Plays Matroska (MKV), AVI, MP4, WebM, and MPEG-TS files instantly in-browser without server conversion.</p>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+        </div>
+        <h3 class="tech-title">Universal Embed Link</h3>
+        <p class="tech-desc">Integrates effortlessly into WordPress, Webflow, custom CMS, or static sites using standalone responsive iframe parameters.</p>
+      </div>
+
+      <div class="tech-box">
+        <div class="tech-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+        </div>
+        <h3 class="tech-title">Interactive API & Events</h3>
+        <p class="tech-desc">Comprehensive postMessage protocol allows embedding applications to control playback, volume, and listen to timeline changes.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="sandbox-modal">
+    <div class="modal-window">
+      <div class="modal-bar">
+        <div class="modal-heading">
+          <span class="dot-pulse"></span>
+          <span>Live Embed Sandbox Simulation</span>
+        </div>
+        <button class="modal-close-btn" id="close-sandbox-modal-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-iframe-frame">
+          <iframe id="modal-sandbox-iframe" title="Sandbox Iframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+        </div>
+        <div class="modal-remote-controls">
+          <button class="pill-ctrl" id="modal-ctrl-play">Play</button>
+          <button class="pill-ctrl" id="modal-ctrl-pause">Pause</button>
+          <button class="pill-ctrl" id="modal-ctrl-fwd">+15s Forward</button>
+          <button class="pill-ctrl" id="modal-ctrl-mute">Toggle Mute</button>
+          <button class="pill-ctrl" id="modal-ctrl-speed">1.5x Speed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-bubble" id="toast-notification">Code copied to clipboard!</div>
+
+  <div class="modal-backdrop" id="info-modal">
+    <div class="modal-window" style="max-width: 680px;">
+      <div class="modal-bar">
+        <div>
+          <div class="modal-heading" id="info-modal-title">About VidEmbed</div>
+          <div style="font-size: 12.5px; color: var(--text-subtle); margin-top: 2px;" id="info-modal-subtitle">A high-performance universal media stream engine</div>
+        </div>
+        <button class="modal-close-btn" id="info-modal-close" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" id="info-modal-content" style="font-size: 14px; line-height: 1.7; color: var(--text-muted); max-height: 60vh; overflow-y: auto;">
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-top-row">
+        <div class="footer-brand-copy">
+          &copy; 2026 <strong>VidEmbed</strong>
+          <svg class="footer-verified-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>
+        </div>
+        <div class="footer-links-row">
+          <a href="#about" id="footer-about-link">About Us</a>
+          <span class="footer-sep">&bull;</span>
+          <a href="#privacy" id="footer-privacy-link">Privacy Policy</a>
+          <span class="footer-sep">&bull;</span>
+          <a href="#terms" id="footer-terms-link">Terms &amp; Conditions</a>
+        </div>
+      </div>
+      <div class="footer-credit-row">
+        Designed &amp; Developed with <span class="heart-symbol">&#10084;&#65039;</span> by <a href="https://sumanonline.com" target="_blank" rel="noopener">SumanOnline.Com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

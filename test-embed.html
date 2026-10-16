@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>External Embed Integration Test — VidEmbed</title>
+  <link rel="icon" type="image/png" href="/assets/img/fav.png" />
+  <link rel="apple-touch-icon" href="/assets/img/fav.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <style>
+    .test-page-container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+    .test-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .test-desc {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .test-grid-boxes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 768px) {
+      .test-grid-boxes { grid-template-columns: 1fr; }
+    }
+    .box-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+    }
+    .box-heading {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .embed-holder {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 16px;
+      background: #000;
+      border: 1px solid var(--border-subtle);
+    }
+    .embed-holder iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn-ctrl {
+      padding: 8px 14px;
+      background: var(--bg-elevated);
+      color: #fff;
+      border: 1px solid var(--border-medium);
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-ctrl:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    .log-box {
+      background: #040508;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: #38bdf8;
+      height: 96px;
+      overflow-y: auto;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-container">
+      <a href="/" class="brand-wrapper">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text-col">
+          <div class="brand-name">Vid<span>Embed</span></div>
+          <div class="brand-tagline">A SumanOnline Project</div>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="/" class="nav-btn">Studio</a>
+        <a href="/docs" class="nav-btn">API Docs</a>
+        <a href="/embed?url=https://lorem.video/720p.mp4&title=720p+Test+Video" target="_blank" class="nav-btn primary">Live Player</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="test-page-container">
+    <h1 class="test-title">External Integration Demo</h1>
+    <p class="test-desc">Simulating an external third-party website embedding VidEmbed Player via URL parameters (left) and the JavaScript SDK API (right).</p>
+
+    <div class="test-grid-boxes">
+      <div class="box-card">
+        <div class="box-heading">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          <span>1. URL Parameter Mode (Iframe)</span>
+        </div>
+        <div class="embed-holder">
+          <iframe
+            id="url-iframe"
+            src="/embed?url=https://lorem.video/720p.mp4&title=URL+Parameter+Stream&controls=1&autoplay=0&muted=0&theme=dark"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="btn-row">
+          <button id="url-play" class="btn-ctrl">Play via postMessage</button>
+          <button id="url-pause" class="btn-ctrl">Pause</button>
+          <button id="url-seek" class="btn-ctrl">Seek to 15s</button>
+        </div>
+        <div class="log-box" id="url-log">Listening for events...</div>
+      </div>
+
+      <div class="box-card">
+        <div class="box-heading">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>2. API Mode (VidEmbed SDK)</span>
+        </div>
+        <div class="embed-holder" id="sdk-container"></div>
+        <div class="btn-row">
+          <button id="sdk-play" class="btn-ctrl">player.play()</button>
+          <button id="sdk-pause" class="btn-ctrl">player.pause()</button>
+          <button id="sdk-speed" class="btn-ctrl">1.5x Speed</button>
+        </div>
+        <div class="log-box" id="sdk-log">SDK initializing...</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-top-row">
+        <div class="footer-brand-copy">
+          &copy; 2026 <strong>VidEmbed</strong>
+          <svg class="footer-verified-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>
+        </div>
+        <div class="footer-links-row">
+          <a href="/#about">About Us</a>
+          <span class="footer-sep">&bull;</span>
+          <a href="/#privacy">Privacy Policy</a>
+          <span class="footer-sep">&bull;</span>
+          <a href="/#terms">Terms &amp; Conditions</a>
+        </div>
+      </div>
+      <div class="footer-credit-row">
+        Designed &amp; Developed with <span class="heart-symbol">&#10084;&#65039;</span> by <a href="https://sumanonline.com" target="_blank" rel="noopener">SumanOnline.Com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/vidembed.js"></script>
+  <script>
+    const urlIframe = document.getElementById('url-iframe');
+    const urlLog = document.getElementById('url-log');
+
+    function appendUrlLog(msg) {
+      const line = document.createElement('div');
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      urlLog.appendChild(line);
+      urlLog.scrollTop = urlLog.scrollHeight;
+    }
+
+    document.getElementById('url-play').addEventListener('click', () => {
+      urlIframe.contentWindow.postMessage({ source: 'vidembed-host', action: 'play' }, '*');
+    });
+
+    document.getElementById('url-pause').addEventListener('click', () => {
+      urlIframe.contentWindow.postMessage({ source: 'vidembed-host', action: 'pause' }, '*');
+    });
+
+    document.getElementById('url-seek').addEventListener('click', () => {
+      urlIframe.contentWindow.postMessage({ source: 'vidembed-host', action: 'seek', value: 15 }, '*');
+    });
+
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.source === 'vidembed') {
+        appendUrlLog(`Event: ${e.data.event}`);
+      }
+    });
+
+    const sdkLog = document.getElementById('sdk-log');
+    function appendSdkLog(msg) {
+      const line = document.createElement('div');
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      sdkLog.appendChild(line);
+      sdkLog.scrollTop = sdkLog.scrollHeight;
+    }
+
+    const player = VidEmbed.create('#sdk-container', {
+      src: 'https://lorem.video/cat.mp4',
+      title: 'SDK Controlled Stream',
+      controls: true,
+      theme: 'cyberpunk'
+    });
+
+    player.on('ready', () => appendSdkLog('Player Ready'));
+    player.on('play', () => appendSdkLog('Player Playing'));
+    player.on('pause', () => appendSdkLog('Player Paused'));
+
+    document.getElementById('sdk-play').addEventListener('click', () => player.play());
+    document.getElementById('sdk-pause').addEventListener('click', () => player.pause());
+    document.getElementById('sdk-speed').addEventListener('click', () => player.setPlaybackRate(1.5));
+  </script>
+</body>
+</html>

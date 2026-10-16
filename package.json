@@ -1,0 +1,18 @@
+{
+  "name": "vidembed-player",
+  "version": "1.0.0",
+  "description": "Production-grade universal video player and embed platform",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "movi-player": "^0.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.6"
+  }
+}

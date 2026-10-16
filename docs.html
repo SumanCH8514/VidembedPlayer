@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VidEmbed Player — Developer API & Embed Documentation</title>
+  <link rel="icon" type="image/png" href="/assets/img/fav.png" />
+  <link rel="apple-touch-icon" href="/assets/img/fav.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <style>
+    .docs-container {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .docs-header {
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .docs-title {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .docs-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .docs-section {
+      margin-bottom: 48px;
+    }
+    .docs-section-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+    }
+    .docs-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+    .docs-table th, .docs-table td {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .docs-table th {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+    .docs-table td code {
+      font-family: var(--font-mono);
+      background: rgba(99, 102, 241, 0.15);
+      color: #a5b4fc;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .code-block {
+      background: #040508;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+    .callout {
+      padding: 16px 20px;
+      background: rgba(99, 102, 241, 0.08);
+      border-left: 4px solid var(--primary);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      margin: 20px 0;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-container">
+      <a href="/" class="brand-wrapper">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text-col">
+          <div class="brand-name">Vid<span>Embed</span></div>
+          <div class="brand-tagline">A SumanOnline Project</div>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="/" class="nav-btn">Studio</a>
+        <a href="/embed?url=https://lorem.video/720p.mp4&title=720p+Test+Video" target="_blank" class="nav-btn primary">Live Player</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="docs-container">
+    <header class="docs-header">
+      <h1 class="docs-title">Integration & API Reference</h1>
+      <p class="docs-subtitle">Complete technical guide for embedding VidEmbed Player on external websites, CMS systems, and web applications using URL parameters or the JavaScript SDK.</p>
+    </header>
+
+    <section class="docs-section">
+      <h2 class="docs-section-title">1. URL Parameter Type Integration</h2>
+      <p>The simplest way to embed VidEmbed Player is using a standard HTML <code>&lt;iframe&gt;</code> pointing to <code>/embed</code> with query parameters.</p>
+
+      <div class="code-block">&lt;iframe
+  src="https://your-domain.com/embed?url=https://lorem.video/720p.mp4&amp;title=Sample+Video&amp;autoplay=1&amp;muted=1"
+  style="width: 100%; aspect-ratio: 16/9; border: none; border-radius: 12px;"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+  allowfullscreen&gt;
+&lt;/iframe&gt;</div>
+
+      <table class="docs-table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>url</code> / <code>src</code></td>
+            <td>string</td>
+            <td>none</td>
+            <td>Direct link to the video media (MP4, MKV, AVI, WebM, HLS, DASH, TS).</td>
+          </tr>
+          <tr>
+            <td><code>title</code></td>
+            <td>string</td>
+            <td>none</td>
+            <td>Display title shown in the top control bar and media session.</td>
+          </tr>
+          <tr>
+            <td><code>poster</code></td>
+            <td>string</td>
+            <td>none</td>
+            <td>Preview image URL displayed before the video begins playback.</td>
+          </tr>
+          <tr>
+            <td><code>autoplay</code></td>
+            <td>1 | 0</td>
+            <td>0</td>
+            <td>Automatically starts playback on page load (starts muted per browser autoplay policy).</td>
+          </tr>
+          <tr>
+            <td><code>muted</code></td>
+            <td>1 | 0</td>
+            <td>0</td>
+            <td>Sets audio playback to muted initially.</td>
+          </tr>
+          <tr>
+            <td><code>controls</code></td>
+            <td>1 | 0</td>
+            <td>1</td>
+            <td>Toggles display of the player overlay controls.</td>
+          </tr>
+          <tr>
+            <td><code>loop</code></td>
+            <td>1 | 0</td>
+            <td>0</td>
+            <td>Automatically restarts video from the beginning upon completion.</td>
+          </tr>
+          <tr>
+            <td><code>theme</code></td>
+            <td>string</td>
+            <td>"dark"</td>
+            <td>Player UI theme: <code>dark</code>, <code>light</code>, <code>cyberpunk</code>, or <code>midnight</code>.</td>
+          </tr>
+          <tr>
+            <td><code>accent</code></td>
+            <td>hex color</td>
+            <td>#6366f1</td>
+            <td>Custom accent color for seek bars, highlights, and active buttons (e.g. <code>%2306b6d4</code>).</td>
+          </tr>
+          <tr>
+            <td><code>ambient</code></td>
+            <td>1 | 0</td>
+            <td>0</td>
+            <td>Enables reactive canvas ambient glow behind the player canvas.</td>
+          </tr>
+          <tr>
+            <td><code>starttime</code></td>
+            <td>number</td>
+            <td>0</td>
+            <td>Playback start time offset in seconds (e.g. <code>starttime=45</code>).</td>
+          </tr>
+          <tr>
+            <td><code>data</code></td>
+            <td>base64 string</td>
+            <td>none</td>
+            <td>Base64-encoded JSON payload containing all parameters in a single parameter string.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="docs-section">
+      <h2 class="docs-section-title">2. API Type: JavaScript Embed SDK</h2>
+      <p>For dynamic applications, the <code>vidembed.js</code> client SDK allows mounting and controlling the player programmatically.</p>
+
+      <div class="code-block">&lt;script src="https://your-domain.com/vidembed.js"&gt;&lt;/script&gt;
+&lt;div id="my-video-container"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  const player = VidEmbed.create('#my-video-container', {
+    src: 'https://lorem.video/cat.mp4',
+    title: 'Cat Playing [1080p]',
+    autoplay: false,
+    muted: false,
+    controls: true,
+    theme: 'dark'
+  });
+
+  player.on('play', () => console.log('Video started playing'));
+  player.on('timeupdate', (payload) => console.log('Current time:', payload.currentTime));
+
+  player.seek(30);
+  player.setVolume(0.8);
+&lt;/script&gt;</div>
+    </section>
+
+    <section class="docs-section">
+      <h2 class="docs-section-title">3. API Type: Two-Way postMessage Protocol</h2>
+      <p>When embedding via <code>&lt;iframe&gt;</code>, the parent document can send commands to the iframe and receive real-time playback events.</p>
+
+      <div class="callout">
+        <strong>Host to Iframe Command:</strong> <code>iframe.contentWindow.postMessage({ source: 'vidembed-host', action: 'play' }, '*')</code>
+      </div>
+
+      <table class="docs-table">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Value Type</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>play</code></td>
+            <td>none</td>
+            <td><code>{ source: 'vidembed-host', action: 'play' }</code></td>
+          </tr>
+          <tr>
+            <td><code>pause</code></td>
+            <td>none</td>
+            <td><code>{ source: 'vidembed-host', action: 'pause' }</code></td>
+          </tr>
+          <tr>
+            <td><code>seek</code></td>
+            <td>number (seconds)</td>
+            <td><code>{ source: 'vidembed-host', action: 'seek', value: 45 }</code></td>
+          </tr>
+          <tr>
+            <td><code>setVolume</code></td>
+            <td>number (0.0 to 1.0)</td>
+            <td><code>{ source: 'vidembed-host', action: 'setVolume', value: 0.75 }</code></td>
+          </tr>
+          <tr>
+            <td><code>setMuted</code></td>
+            <td>boolean</td>
+            <td><code>{ source: 'vidembed-host', action: 'setMuted', value: true }</code></td>
+          </tr>
+          <tr>
+            <td><code>setSpeed</code></td>
+            <td>number (playbackRate)</td>
+            <td><code>{ source: 'vidembed-host', action: 'setSpeed', value: 1.5 }</code></td>
+          </tr>
+          <tr>
+            <td><code>loadSource</code></td>
+            <td>string (new URL)</td>
+            <td><code>{ source: 'vidembed-host', action: 'loadSource', value: 'https://lorem.video/720p.mp4', title: 'New Stream' }</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-top-row">
+        <div class="footer-brand-copy">
+          &copy; 2026 <strong>VidEmbed</strong>
+          <svg class="footer-verified-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>
+        </div>
+        <div class="footer-links-row">
+          <a href="/#about">About Us</a>
+          <span class="footer-sep">&bull;</span>
+          <a href="/#privacy">Privacy Policy</a>
+          <span class="footer-sep">&bull;</span>
+          <a href="/#terms">Terms &amp; Conditions</a>
+        </div>
+      </div>
+      <div class="footer-credit-row">
+        Designed &amp; Developed with <span class="heart-symbol">&#10084;&#65039;</span> by <a href="https://sumanonline.com" target="_blank" rel="noopener">SumanOnline.Com</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
