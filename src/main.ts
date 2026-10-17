@@ -1,5 +1,6 @@
 import "movi-player/element";
 import { attachFullscreenWatermark } from "./utils/watermark";
+import { NativeCkinPlayer } from "./player/nativePlayer";
 
 type CodeTab = "iframe" | "url" | "sdk" | "base64";
 
@@ -14,6 +15,7 @@ interface PlayerConfigState {
   ambient: boolean;
   theme: string;
   accent: string;
+  aspect: string;
 }
 
 let activeTab: CodeTab = "iframe";
@@ -56,6 +58,8 @@ function initStudio(): void {
   if (mainPlayer) {
     attachFullscreenWatermark(mainPlayer);
   }
+  const nativeContainer = document.getElementById("native-stage-container") as HTMLElement;
+  let nativePlayer: NativeCkinPlayer | null = null;
   const urlInput = document.getElementById("source-url-input") as HTMLInputElement;
   const loadBtn = document.getElementById("load-url-btn") as HTMLButtonElement;
   const fileInput = document.getElementById("local-file-input") as HTMLInputElement;
@@ -73,6 +77,7 @@ function initStudio(): void {
   const cfgLoop = document.getElementById("cfg-loop") as HTMLInputElement;
   const cfgAmbient = document.getElementById("cfg-ambient") as HTMLInputElement;
   const cfgTheme = document.getElementById("cfg-theme") as HTMLSelectElement;
+  const cfgAspect = document.getElementById("cfg-aspect") as HTMLSelectElement;
   const cfgTitle = document.getElementById("cfg-title") as HTMLInputElement;
   const cfgPoster = document.getElementById("cfg-poster") as HTMLInputElement;
   const cfgAccent = document.getElementById("cfg-accent") as HTMLInputElement;
@@ -108,7 +113,8 @@ function initStudio(): void {
       loop: cfgLoop ? cfgLoop.checked : false,
       ambient: cfgAmbient ? cfgAmbient.checked : true,
       theme: cfgTheme ? cfgTheme.value : "dark",
-      accent: cfgAccentText ? cfgAccentText.value.trim() : "#6366f1"
+      accent: cfgAccentText ? cfgAccentText.value.trim() : "#6366f1",
+      aspect: cfgAspect ? cfgAspect.value : "contain"
     };
   }
 
@@ -127,6 +133,7 @@ function initStudio(): void {
     if (config.ambient) params.set("ambient", "1");
     if (config.theme && config.theme !== "dark") params.set("theme", config.theme);
     if (config.accent && config.accent !== "#6366f1") params.set("accent", config.accent);
+    if (config.aspect && config.aspect !== "contain") params.set("aspect", config.aspect);
 
     return `${base}?${params.toString()}`;
   }
@@ -144,7 +151,8 @@ function initStudio(): void {
       loop: config.loop || undefined,
       ambient: config.ambient || undefined,
       theme: config.theme,
-      accent: config.accent
+      accent: config.accent,
+      aspect: config.aspect !== "contain" ? config.aspect : undefined
     };
     const encoded = encodeURIComponent(btoa(JSON.stringify(payload)));
     return `${base}?data=${encoded}`;
@@ -158,7 +166,7 @@ function initStudio(): void {
   function buildSdkCode(config: PlayerConfigState): string {
     const origin = window.location.origin;
     const posterVal = config.poster || "/assets/img/image.png";
-    return `<script src="${origin}/vidembed.js"></script>\n<div id="vidembed-root"></div>\n<script>\n  const player = VidEmbed.create('#vidembed-root', {\n    src: '${config.url}',\n    title: '${config.title}',\n    poster: '${posterVal}',\n    autoplay: ${config.autoplay},\n    muted: ${config.muted},\n    controls: ${config.controls},\n    loop: ${config.loop},\n    theme: '${config.theme}',\n    accent: '${config.accent}',\n    ambient: ${config.ambient}\n  });\n\n  player.on('play', () => console.log('Playing'));\n  player.on('pause', () => console.log('Paused'));\n  player.on('timeupdate', (e) => console.log(e.currentTime));\n</script>`;
+    return `<script src="${origin}/vidembed.js"></script>\n<div id="vidembed-root"></div>\n<script>\n  const player = VidEmbed.create('#vidembed-root', {\n    src: '${config.url}',\n    title: '${config.title}',\n    poster: '${posterVal}',\n    autoplay: ${config.autoplay},\n    muted: ${config.muted},\n    controls: ${config.controls},\n    loop: ${config.loop},\n    theme: '${config.theme}',\n    accent: '${config.accent}',\n    ambient: ${config.ambient},\n    fit: '${config.aspect || 'contain'}'\n  });\n\n  player.on('play', () => console.log('Playing'));\n  player.on('pause', () => console.log('Paused'));\n  player.on('timeupdate', (e) => console.log(e.currentTime));\n</script>`;
   }
 
   function updateCode(): void {
@@ -188,6 +196,64 @@ function initStudio(): void {
     }
   }
 
+  let activeEngine: "wasm" | "native" = "wasm";
+  let currentTargetUrl = "";
+  let currentTargetTitle = "";
+  let currentTargetPoster = "";
+
+  function switchToNativeFallback(): void {
+    if (activeEngine === "native" || !currentTargetUrl) return;
+    activeEngine = "native";
+
+    try {
+      if (mainPlayer) mainPlayer.pause();
+    } catch {}
+
+    if (mainPlayer) mainPlayer.style.display = "none";
+    if (nativeContainer) nativeContainer.style.display = "block";
+
+    const effectivePoster = currentTargetPoster || (cfgPoster && cfgPoster.value.trim()) || "/assets/img/image.png";
+    const effectiveTitle = currentTargetTitle || (cfgTitle && cfgTitle.value.trim()) || "";
+    const effectiveAccent = cfgAccentText ? cfgAccentText.value.trim() : "#6366f1";
+    const effectiveFit = (cfgAspect ? cfgAspect.value : "contain") as any;
+
+    if (!nativePlayer && nativeContainer) {
+      nativePlayer = new NativeCkinPlayer(nativeContainer, {
+        src: currentTargetUrl,
+        title: effectiveTitle,
+        poster: effectivePoster,
+        autoplay: true,
+        controls: true,
+        ambient: cfgAmbient ? cfgAmbient.checked : true,
+        accent: effectiveAccent,
+        fit: effectiveFit
+      });
+
+      nativePlayer.on("play", () => {
+        if (activeEngine === "native" && telemetryStatus) telemetryStatus.textContent = "Playing";
+      });
+      nativePlayer.on("pause", () => {
+        if (activeEngine === "native" && telemetryStatus) telemetryStatus.textContent = "Paused";
+      });
+      nativePlayer.on("timeupdate", (p: any) => {
+        if (activeEngine === "native" && telemetryTime) {
+          telemetryTime.textContent = `${formatSeconds(p.currentTime || 0)} / ${formatSeconds(p.duration || 0)}`;
+        }
+      });
+      nativePlayer.on("error", () => {
+        if (activeEngine === "native" && telemetryStatus) telemetryStatus.textContent = "Playback Error";
+      });
+    } else if (nativePlayer && currentTargetUrl) {
+      nativePlayer.setPoster(effectivePoster);
+      nativePlayer.setFit(effectiveFit);
+      nativePlayer.loadSource(currentTargetUrl, effectiveTitle);
+      nativePlayer.play();
+    }
+
+    if (telemetryEngine) telemetryEngine.textContent = "Native HTML5 (Failover)";
+    showToast("WASM engine failed. Switched to Native HTML5 player");
+  }
+
   function loadStream(url: string, title?: string, poster?: string): void {
     if (!url) return;
     if (urlInput) urlInput.value = url;
@@ -201,13 +267,29 @@ function initStudio(): void {
     if (telemetryStatus) telemetryStatus.textContent = "Loading...";
     if (telemetryFormat) telemetryFormat.textContent = detectFormat(url);
 
+    currentTargetUrl = url;
+    currentTargetTitle = title || (cfgTitle && cfgTitle.value.trim()) || "";
+    currentTargetPoster = poster || (cfgPoster && cfgPoster.value.trim()) || "/assets/img/image.png";
+
+    activeEngine = "wasm";
+    if (nativePlayer) {
+      try { nativePlayer.pause(); } catch {}
+    }
+    if (nativeContainer) {
+      nativeContainer.style.display = "none";
+    }
     if (mainPlayer) {
-      if (title) mainPlayer.setAttribute("title", title);
-      const effectivePoster = poster || (cfgPoster && cfgPoster.value.trim()) || "/assets/img/image.png";
-      mainPlayer.setAttribute("poster", effectivePoster);
+      mainPlayer.style.display = "block";
+      const fitMode = cfgAspect ? cfgAspect.value : "contain";
+      mainPlayer.setAttribute("objectfit", fitMode);
+      mainPlayer.setAttribute("posterfit", fitMode);
+      if (currentTargetTitle) mainPlayer.setAttribute("title", currentTargetTitle);
+      mainPlayer.setAttribute("poster", currentTargetPoster);
       mainPlayer.src = url;
       mainPlayer.play().catch(() => {});
     }
+
+    if (telemetryEngine) telemetryEngine.textContent = "WASM Engine (Primary)";
 
     updateCode();
   }
@@ -246,7 +328,15 @@ function initStudio(): void {
       if (telemetryStatus) telemetryStatus.textContent = "Playing Local File";
       if (telemetryFormat) telemetryFormat.textContent = detectFormat(fileName);
 
+      if (nativePlayer) {
+        nativePlayer.pause();
+      }
+      if (nativeContainer) {
+        nativeContainer.style.display = "none";
+      }
+
       if (mainPlayer) {
+        mainPlayer.style.display = "block";
         if (mainPlayer.setFile) {
           mainPlayer.setFile(file);
         } else {
@@ -255,6 +345,8 @@ function initStudio(): void {
         mainPlayer.setAttribute("title", fileName);
         mainPlayer.play().catch(() => {});
       }
+
+      if (telemetryEngine) telemetryEngine.textContent = "WASM WebCodecs";
 
       showToast(`Loaded local file: ${fileName}`);
     });
@@ -269,13 +361,26 @@ function initStudio(): void {
     });
   });
 
-  const configInputs = [cfgAutoplay, cfgMuted, cfgControls, cfgLoop, cfgAmbient, cfgTheme, cfgTitle, cfgPoster];
+  const configInputs = [cfgAutoplay, cfgMuted, cfgControls, cfgLoop, cfgAmbient, cfgTheme, cfgAspect, cfgTitle, cfgPoster];
   configInputs.forEach((input) => {
     if (input) {
       input.addEventListener("change", updateCode);
       input.addEventListener("input", updateCode);
     }
   });
+
+  if (cfgAspect) {
+    cfgAspect.addEventListener("change", () => {
+      const val = cfgAspect.value;
+      if (mainPlayer) {
+        mainPlayer.setAttribute("objectfit", val);
+        mainPlayer.setAttribute("posterfit", val);
+      }
+      if (nativePlayer) {
+        nativePlayer.setFit(val);
+      }
+    });
+  }
 
   if (cfgAccent && cfgAccentText) {
     cfgAccent.addEventListener("input", () => {
@@ -394,23 +499,29 @@ function initStudio(): void {
 
   if (mainPlayer) {
     mainPlayer.addEventListener("play", () => {
-      if (telemetryStatus) telemetryStatus.textContent = "Playing";
+      if (activeEngine === "wasm" && telemetryStatus) telemetryStatus.textContent = "Playing";
     });
     mainPlayer.addEventListener("pause", () => {
-      if (telemetryStatus) telemetryStatus.textContent = "Paused";
+      if (activeEngine === "wasm" && telemetryStatus) telemetryStatus.textContent = "Paused";
     });
     mainPlayer.addEventListener("waiting", () => {
-      if (telemetryStatus) telemetryStatus.textContent = "Buffering";
+      if (activeEngine === "wasm" && telemetryStatus) telemetryStatus.textContent = "Buffering";
     });
     mainPlayer.addEventListener("timeupdate", () => {
-      if (telemetryTime) {
+      if (activeEngine === "wasm" && telemetryTime) {
         const cur = mainPlayer.currentTime || 0;
         const dur = mainPlayer.duration || 0;
         telemetryTime.textContent = `${formatSeconds(cur)} / ${formatSeconds(dur)}`;
       }
     });
     mainPlayer.addEventListener("loadedmetadata", () => {
-      if (telemetryEngine) telemetryEngine.textContent = "Hardware Accelerated";
+      if (activeEngine === "wasm" && telemetryEngine) telemetryEngine.textContent = "WASM WebCodecs (Active)";
+    });
+    mainPlayer.addEventListener("error", () => {
+      switchToNativeFallback();
+    });
+    mainPlayer.addEventListener("errordisplay", () => {
+      switchToNativeFallback();
     });
   }
 

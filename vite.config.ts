@@ -2,13 +2,15 @@ import { defineConfig, Plugin } from "vite";
 import { resolve } from "path";
 import fs from "fs";
 
+const rootDir = import.meta.dirname;
+
 function cleanUrlsPlugin(): Plugin {
   const handler = (req: any, res: any, next: any) => {
     if (req.url) {
       const [pathname, search] = req.url.split("?");
       if (pathname.endsWith(".html") && pathname !== "/index.html") {
         const clean = pathname.slice(0, -5);
-        const targetFile = resolve(__dirname, `.${clean}.html`);
+        const targetFile = resolve(rootDir, `.${clean}.html`);
         if (fs.existsSync(targetFile)) {
           const destination = search ? `${clean}?${search}` : clean;
           res.statusCode = 301;
@@ -19,9 +21,13 @@ function cleanUrlsPlugin(): Plugin {
       }
       if (!pathname.includes(".") && pathname !== "/") {
         const clean = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
-        const targetFile = resolve(__dirname, `.${clean}.html`);
-        if (fs.existsSync(targetFile)) {
-          req.url = search ? `${clean}.html?${search}` : `${clean}.html`;
+        if (clean === "/auto" || clean.startsWith("/auto/")) {
+          req.url = search ? `/auto.html?${search}` : `/auto.html`;
+        } else {
+          const targetFile = resolve(rootDir, `.${clean}.html`);
+          if (fs.existsSync(targetFile)) {
+            req.url = search ? `${clean}.html?${search}` : `${clean}.html`;
+          }
         }
       }
     }
@@ -40,20 +46,17 @@ function cleanUrlsPlugin(): Plugin {
 
 export default defineConfig({
   server: {
-    port: 3000,
-    headers: {
-      "Cross-Origin-Opener-Policy": "same-origin",
-      "Cross-Origin-Embedder-Policy": "credentialless"
-    }
+    port: 3000
   },
   plugins: [cleanUrlsPlugin()],
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "index.html"),
-        embed: resolve(__dirname, "embed.html"),
-        docs: resolve(__dirname, "docs.html"),
-        test: resolve(__dirname, "test-embed.html")
+        main: resolve(rootDir, "index.html"),
+        embed: resolve(rootDir, "embed.html"),
+        auto: resolve(rootDir, "auto.html"),
+        docs: resolve(rootDir, "docs.html"),
+        test: resolve(rootDir, "test-embed.html")
       }
     }
   }

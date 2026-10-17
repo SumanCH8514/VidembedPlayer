@@ -115,15 +115,16 @@
 <body>
   <div id="embed-stage">
     <movi-player
-      id="vidembed-player"
+      id="vidembed-wasm-player"
       renderer="canvas"
       playsinline
       fastseek
-      objectfit="control"
+      objectfit="contain"
+      posterfit="contain"
       poster="/assets/img/image.png"
       wasmurl="/movi.wasm"
     ></movi-player>
-
+    <div id="player-container" style="width: 100%; height: 100%; display: none;"></div>
 
     <div class="embed-alert" id="embed-alert">
       <div class="embed-alert-card">
@@ -135,7 +136,7 @@
           </svg>
         </div>
         <div class="embed-alert-title" id="embed-alert-title">Playback Encountered an Issue</div>
-        <div class="embed-alert-desc" id="embed-alert-desc">Unable to load the requested video stream. Verify the video URL and check CORS configuration.</div>
+        <div class="embed-alert-desc" id="embed-alert-desc">Unable to load the requested video stream. Verify the video URL.</div>
         <button class="embed-alert-btn" id="embed-alert-retry">Retry Playback</button>
       </div>
     </div>

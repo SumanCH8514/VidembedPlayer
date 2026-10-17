@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <title>Auto Stream Player &amp; Embed Studio — VidEmbed</title>
+  <meta name="description" content="Production-ready TMDB and IMDb auto stream embed generator. Multi-server failover, adaptive HLS, custom player branding, and live interactive preview." />
+  <link rel="icon" type="image/png" href="/assets/img/fav.png" />
+  <link rel="apple-touch-icon" href="/assets/img/fav.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <link rel="stylesheet" href="/src/auto/autoStudio.css">
+  <link rel="stylesheet" href="/src/auto/autoPlayer.css">
+</head>
+<body>
+  <div id="studio-app-root" class="studio-page-wrap">
+    <header class="studio-nav-header">
+      <div class="studio-nav-inner">
+        <a href="/auto" class="studio-brand-link">
+          <div class="studio-brand-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div class="studio-brand-text">
+            <div class="studio-brand-title">Auto<span>Embed</span></div>
+            <div class="studio-brand-subtitle">A SumanOnline Project</div>
+          </div>
+        </a>
+
+        <div class="studio-nav-actions">
+          <a href="/" class="studio-nav-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Universal Studio</span>
+          </a>
+          <a href="/docs" class="studio-nav-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <span>Docs</span>
+          </a>
+          <a href="/test-embed" class="studio-nav-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <span>Demo</span>
+          </a>
+          <button id="nav-btn-direct-cinema" class="studio-nav-btn primary">
+            <span>Direct Cinema</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="studio-main-content">
+      <section class="studio-hero">
+        <h1 class="studio-hero-title">TMDB &amp; IMDb Auto Stream <span>Embed Studio</span></h1>
+        <p class="studio-hero-sub">Resolve multi-server streams with direct HLS delivery, subtitle tracks, and failover redundancy. Preview live with customized branding and generate production embed codes.</p>
+        <div class="studio-hero-badges">
+          <span class="studio-badge highlight">Multi-Server Failover</span>
+          <span class="studio-badge">TMDB &amp; IMDb Compatible</span>
+          <span class="studio-badge">Direct 1080p/720p HLS</span>
+          <span class="studio-badge">Multi-Audio &amp; Subtitles</span>
+          <span class="studio-badge">Default Aspect Ratio: Fit</span>
+          <span class="studio-badge">Zero Ads Engine</span>
+        </div>
+      </section>
+
+      <section class="studio-main-card">
+        <div class="studio-toolbar-block">
+          <div class="studio-toolbar-row">
+            <div class="studio-type-switch">
+              <button id="type-btn-movie" class="studio-type-btn active">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                  <line x1="7" y1="2" x2="7" y2="22"></line>
+                  <line x1="17" y1="2" x2="17" y2="22"></line>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <line x1="2" y1="7" x2="7" y2="7"></line>
+                  <line x1="2" y1="17" x2="7" y2="17"></line>
+                  <line x1="17" y1="17" x2="22" y2="17"></line>
+                  <line x1="17" y1="7" x2="22" y2="7"></line>
+                </svg>
+                <span>Movie</span>
+              </button>
+              <button id="type-btn-tv" class="studio-type-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect>
+                  <polyline points="17 2 12 7 7 2"></polyline>
+                </svg>
+                <span>TV Series</span>
+              </button>
+            </div>
+
+            <div class="studio-input-wrap">
+              <svg class="studio-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input
+                type="text"
+                id="studio-id-input"
+                class="studio-id-input"
+                placeholder="Enter TMDB ID (e.g. 1236045) or IMDb ID (e.g. tt123542)..."
+                value="1236045"
+              />
+            </div>
+
+            <div id="studio-season-group" class="studio-season-group" style="display: none;">
+              <div class="studio-num-input-wrap">
+                <span class="studio-num-label">Season</span>
+                <input type="number" id="studio-season-input" class="studio-num-field" value="1" min="1" max="99" />
+              </div>
+              <div class="studio-num-input-wrap">
+                <span class="studio-num-label">Episode</span>
+                <input type="number" id="studio-episode-input" class="studio-num-field" value="1" min="1" max="999" />
+              </div>
+            </div>
+
+            <button id="studio-btn-fetch" class="studio-btn-fetch">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span>Fetch &amp; Play</span>
+            </button>
+          </div>
+
+          <div class="studio-presets-row">
+            <span class="studio-presets-lbl">Popular Presets:</span>
+            <button class="studio-preset-chip active" data-type="movie" data-id="1236045" data-title="Animals">
+              <span>Animals [2026]</span>
+            </button>
+            <button class="studio-preset-chip" data-type="tv" data-id="123542" data-season="1" data-episode="1" data-title="House of the Dragon">
+              <span>House of the Dragon [S1:E1]</span>
+            </button>
+            <button class="studio-preset-chip" data-type="movie" data-id="933260" data-title="Gladiator II">
+              <span>Gladiator II [2024]</span>
+            </button>
+            <button class="studio-preset-chip" data-type="tv" data-id="66732" data-season="1" data-episode="1" data-title="Stranger Things">
+              <span>Stranger Things [S1:E1]</span>
+            </button>
+            <button class="studio-preset-chip" data-type="movie" data-id="tt1375666" data-title="Inception">
+              <span>Inception [IMDb tt1375666]</span>
+            </button>
+            <button class="studio-preset-chip" data-type="tv" data-id="1396" data-season="1" data-episode="1" data-title="Breaking Bad">
+              <span>Breaking Bad [S1:E1]</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="studio-review-card" class="studio-review-card">
+          <img id="studio-poster-img" class="studio-poster-thumb" src="https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" alt="Poster Thumbnail" />
+          <div class="studio-meta-details">
+            <div class="studio-meta-header-row">
+              <h2 id="studio-title" class="studio-meta-title">Animals</h2>
+              <span id="studio-year" class="studio-meta-year-badge">2026</span>
+              <span id="studio-rating" class="studio-meta-rating-badge">★ 7.9/10</span>
+              <span id="studio-content-rating" class="studio-meta-content-badge">R</span>
+              <span id="studio-duration" class="studio-meta-year-badge">1h 48m</span>
+            </div>
+
+            <div id="studio-genres" class="studio-meta-genres">
+              <span class="studio-genre-chip">Crime</span>
+              <span class="studio-genre-chip">Drama</span>
+              <span class="studio-genre-chip">Thriller</span>
+            </div>
+
+            <p id="studio-overview" class="studio-meta-overview">
+              When the son of a mayoral candidate is kidnapped, the candidate and his wife must work with two street cops to solve the mystery amidst a web of deception.
+            </p>
+
+            <div class="studio-server-health-row">
+              <div class="studio-health-pill">
+                <div class="studio-health-dot"></div>
+                <span id="studio-health-servers">Resolving Multi-Servers...</span>
+              </div>
+              <div class="studio-health-pill">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                <span id="studio-health-stream">Primary: Castle (Direct HLS)</span>
+              </div>
+              <div class="studio-health-pill">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Aspect Ratio: Fit [Default]</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="studio-player-stage">
+          <div id="auto-player-root" class="studio-player-mount"></div>
+        </div>
+
+        <div class="studio-telemetry-row">
+          <div class="studio-telemetry-item">
+            <span class="studio-telemetry-lbl">Stream Engine</span>
+            <span id="studio-tele-engine" class="studio-telemetry-val">Castle Native HLS</span>
+          </div>
+          <div class="studio-telemetry-item">
+            <span class="studio-telemetry-lbl">Active Server</span>
+            <span id="studio-tele-server" class="studio-telemetry-val">Castle (Server 1)</span>
+          </div>
+          <div class="studio-telemetry-item">
+            <span class="studio-telemetry-lbl">Audio Tracks</span>
+            <span id="studio-tele-audio" class="studio-telemetry-val">English, Hindi, Tamil, Telugu</span>
+          </div>
+          <div class="studio-telemetry-item">
+            <span class="studio-telemetry-lbl">Aspect Ratio</span>
+            <span id="studio-tele-aspect" class="studio-telemetry-val">Fit (contain)</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="studio-grid-suite">
+        <div class="studio-card-box">
+          <div class="studio-card-head">
+            <div class="studio-card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+              <span>Embed Customizer</span>
+            </div>
+          </div>
+
+          <div class="studio-form-row">
+            <label class="studio-form-label" for="cfg-brand">Brand Watermark Text</label>
+            <input type="text" id="cfg-brand" class="studio-form-input" value="SumanMovies" placeholder="e.g. SumanMovies" />
+          </div>
+
+          <div class="studio-form-row">
+            <label class="studio-form-label">Player Theme Accent Color</label>
+            <div class="studio-color-pick-row">
+              <button class="studio-color-swatch active" data-color="#06b6d4" style="background:#06b6d4;" aria-label="Cyan"></button>
+              <button class="studio-color-swatch" data-color="#6366f1" style="background:#6366f1;" aria-label="Indigo"></button>
+              <button class="studio-color-swatch" data-color="#10b981" style="background:#10b981;" aria-label="Emerald"></button>
+              <button class="studio-color-swatch" data-color="#f59e0b" style="background:#f59e0b;" aria-label="Amber"></button>
+              <button class="studio-color-swatch" data-color="#f43f5e" style="background:#f43f5e;" aria-label="Rose"></button>
+              <input type="text" id="cfg-color-hex" class="studio-form-input" value="#06b6d4" style="width: 100px; text-transform: uppercase;" />
+            </div>
+          </div>
+
+          <div class="studio-toggle-row">
+            <span class="studio-toggle-label">Autoplay</span>
+            <label class="switch">
+              <input type="checkbox" id="cfg-autoplay">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="studio-toggle-row">
+            <span class="studio-toggle-label">Muted by Default</span>
+            <label class="switch">
+              <input type="checkbox" id="cfg-muted">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="studio-form-row">
+            <label class="studio-form-label" for="cfg-fit">Aspect Ratio Mode</label>
+            <select id="cfg-fit" class="studio-aspect-select">
+              <option value="contain" selected>Fit (contain) [Default]</option>
+              <option value="cover">Fill Screen (cover)</option>
+              <option value="fill">Stretch (100% 100%)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="studio-card-box">
+          <div class="studio-card-head">
+            <div class="studio-card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              <span>Generated Code Suite</span>
+            </div>
+            <div class="studio-tabs-row">
+              <button id="tab-code-iframe" class="studio-tab-btn active">Iframe</button>
+              <button id="tab-code-link" class="studio-tab-btn">Direct Link</button>
+              <button id="tab-code-sdk" class="studio-tab-btn">JS SDK</button>
+              <button id="tab-code-api" class="studio-tab-btn">Raw API</button>
+            </div>
+          </div>
+
+          <div class="studio-code-display-wrap">
+            <button id="studio-btn-copy" class="studio-code-copy-btn" aria-label="Copy code">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy</span>
+            </button>
+            <pre><code id="studio-code-output">Loading embed code...</code></pre>
+          </div>
+
+          <div class="studio-code-actions-row">
+            <button id="studio-btn-sandbox" class="studio-action-outline-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+              </svg>
+              <span>Test in Live Sandbox</span>
+            </button>
+            <button id="studio-btn-launch" class="studio-action-outline-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              <span>Open Standalone Embed</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-top-row">
+          <div class="footer-brand-copy">
+            &copy; 2026 <strong>VidEmbed</strong>
+            <svg class="footer-verified-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </div>
+          <div class="footer-links-row">
+            <a href="#about" id="footer-about-link">About Us</a>
+            <span class="footer-sep">&bull;</span>
+            <a href="#privacy" id="footer-privacy-link">Privacy Policy</a>
+            <span class="footer-sep">&bull;</span>
+            <a href="#terms" id="footer-terms-link">Terms &amp; Conditions</a>
+          </div>
+        </div>
+        <div class="footer-credit-row">
+          Built, designed &amp; maintained by <a href="https://sumanonline.com" target="_blank" rel="noopener">SumanOnline Web Services</a> (SumanOnline.Com)
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <div id="studio-sandbox-modal" class="studio-sandbox-modal-backdrop">
+    <div class="studio-sandbox-window">
+      <div class="studio-sandbox-bar">
+        <div class="studio-sandbox-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span>Live Embed Sandbox Preview</span>
+        </div>
+        <button id="studio-sandbox-close" class="studio-sandbox-close-btn" aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="studio-sandbox-body">
+        <div class="studio-sandbox-iframe-holder">
+          <iframe id="studio-sandbox-frame" src="about:blank" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="studio-info-modal" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 680px;">
+      <div class="modal-bar">
+        <div>
+          <div class="modal-heading" id="studio-info-title">About VidEmbed Auto Stream</div>
+          <div style="font-size: 12.5px; color: var(--text-subtle); margin-top: 2px;">Production Multi-Server Streaming Architecture</div>
+        </div>
+        <button class="modal-close-btn" id="studio-info-close" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" id="studio-info-content" style="font-size: 14px; line-height: 1.7; color: var(--text-muted); max-height: 60vh; overflow-y: auto;">
+      </div>
+    </div>
+  </div>
+
+  <div id="studio-toast" class="studio-toast">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="studio-toast-msg">Code copied to clipboard!</span>
+  </div>
+
+  <script type="module" src="/src/auto/autoStudio.ts"></script>
+</body>
+</html>

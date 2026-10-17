@@ -1,0 +1,450 @@
+.ckin-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  border-radius: inherit;
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ckin-ambient-canvas {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  pointer-events: none;
+  filter: blur(48px) saturate(1.8) opacity(0.65);
+  z-index: 0;
+  transform: scale(1.1);
+  transition: opacity 0.5s ease;
+}
+
+.ckin-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+  background: #000;
+}
+
+.ckin-poster {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 2;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.ckin-poster.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ckin-watermark {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10, 15, 30, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.ckin-watermark-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.ckin-watermark-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+.ckin-watermark-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: #f1f5f9;
+}
+
+.ckin-watermark-text span {
+  color: #38bdf8;
+}
+
+.ckin-top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.ckin-top-bar.hidden {
+  opacity: 0;
+}
+
+.ckin-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  max-width: 65%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ckin-big-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 6;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease, border-color 0.25s ease, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.ckin-big-play:hover {
+  transform: translate(-50%, -50%) scale(1.12);
+  background: var(--accent-color, #6366f1);
+  border-color: #ffffff;
+}
+
+.ckin-big-play.playing {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.8);
+}
+
+.ckin-big-play svg {
+  width: 28px;
+  height: 28px;
+  margin-left: 3px;
+  fill: currentColor;
+}
+
+.ckin-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 52px;
+  border: 4px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--accent-color, #6366f1);
+  border-radius: 50%;
+  animation: ckin-spin 0.8s linear infinite;
+  z-index: 7;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease;
+}
+
+.ckin-spinner.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+@keyframes ckin-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.ckin-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(0deg, rgba(5, 8, 18, 0.88) 0%, rgba(5, 8, 18, 0.4) 65%, rgba(5, 8, 18, 0) 100%);
+  padding: 24px 16px 12px;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.ckin-controls.hidden {
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+}
+
+.ckin-scrub-bar {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 4px;
+  cursor: pointer;
+  touch-action: none;
+  transition: height 0.15s ease;
+}
+
+.ckin-scrub-bar:hover {
+  height: 9px;
+}
+
+.ckin-buffer-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.38);
+  border-radius: 4px;
+  pointer-events: none;
+  width: 0%;
+  transition: width 0.2s ease;
+}
+
+.ckin-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--accent-color, #6366f1);
+  border-radius: 4px;
+  pointer-events: none;
+  width: 0%;
+}
+
+.ckin-scrub-handle {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  transition: transform 0.15s ease;
+}
+
+.ckin-scrub-bar:hover .ckin-scrub-handle,
+.ckin-scrub-bar.dragging .ckin-scrub-handle {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.ckin-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.ckin-controls-left,
+.ckin-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ckin-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f8fafc;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: color 0.2s ease, transform 0.15s ease, background 0.2s ease;
+}
+
+.ckin-btn:hover {
+  color: var(--accent-color, #6366f1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ckin-btn:active {
+  transform: scale(0.92);
+}
+
+.ckin-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.ckin-time-display {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+.ckin-time-display .current {
+  color: #ffffff;
+}
+
+.ckin-volume-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ckin-volume-slider-box {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.ckin-volume-wrapper:hover .ckin-volume-slider-box,
+.ckin-volume-wrapper.open .ckin-volume-slider-box {
+  width: 68px;
+  opacity: 1;
+}
+
+.ckin-volume-slider {
+  width: 64px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+.ckin-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent-color, #6366f1);
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+.ckin-speed-dropdown {
+  position: relative;
+}
+
+.ckin-speed-menu {
+  position: absolute;
+  bottom: 40px;
+  right: 0;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 6px 0;
+  display: none;
+  flex-direction: column;
+  min-width: 80px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  z-index: 15;
+}
+
+.ckin-speed-menu.open {
+  display: flex;
+}
+
+.ckin-speed-item {
+  background: none;
+  border: none;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #cbd5e1;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ckin-speed-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.ckin-speed-item.active {
+  color: var(--accent-color, #6366f1);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .ckin-controls {
+    padding: 16px 10px 8px;
+  }
+  .ckin-controls-left,
+  .ckin-controls-right {
+    gap: 6px;
+  }
+  .ckin-btn {
+    width: 28px;
+    height: 28px;
+  }
+  .ckin-time-display {
+    font-size: 10px;
+  }
+  .ckin-watermark {
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+  }
+  .ckin-watermark-text {
+    font-size: 9px;
+  }
+}

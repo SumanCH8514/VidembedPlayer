@@ -1,5 +1,6 @@
 import "movi-player/element";
 import { attachFullscreenWatermark } from "./utils/watermark";
+import { NativeCkinPlayer } from "./player/nativePlayer";
 
 interface EmbedConfig {
   url?: string;
@@ -14,6 +15,8 @@ interface EmbedConfig {
   accent?: string;
   ambient?: boolean;
   starttime?: number;
+  fit?: string;
+  aspect?: string;
 }
 
 function parseParameters(): EmbedConfig {
@@ -41,6 +44,9 @@ function parseParameters(): EmbedConfig {
     return isNaN(num) ? undefined : num;
   };
 
+  const rawFit = params.get("fit") || params.get("aspect") || params.get("objectfit") || "contain";
+  const normalizedFit = rawFit === "fit" ? "contain" : rawFit;
+
   return {
     url: params.get("url") || params.get("src") || undefined,
     title: params.get("title") || undefined,
@@ -52,136 +58,201 @@ function parseParameters(): EmbedConfig {
     theme: params.get("theme") || "dark",
     accent: params.get("accent") || undefined,
     ambient: parseBoolean(params.get("ambient"), false),
-    starttime: parseNumber(params.get("starttime"))
+    starttime: parseNumber(params.get("starttime")),
+    fit: normalizedFit
   };
 }
 
 function initEmbedPlayer(): void {
-  const player = document.getElementById("vidembed-player") as any;
+  const wasmPlayer = document.getElementById("vidembed-wasm-player") as any;
+  const nativeContainer = document.getElementById("player-container");
   const alertOverlay = document.getElementById("embed-alert");
   const alertTitle = document.getElementById("embed-alert-title");
   const alertDesc = document.getElementById("embed-alert-desc");
   const retryBtn = document.getElementById("embed-alert-retry");
-  if (!player) return;
 
-  attachFullscreenWatermark(player);
+  if (!wasmPlayer || !nativeContainer) return;
 
   const config = parseParameters();
+  let targetUrl = config.url || config.src;
+  let currentTitle = config.title;
+  let currentPoster = config.poster || "/assets/img/image.png";
 
   if (config.accent) {
     document.documentElement.style.setProperty("--accent-color", config.accent);
-    player.style.setProperty("--movi-primary-accent", config.accent);
+    wasmPlayer.style.setProperty("--movi-primary-accent", config.accent);
   }
 
   if (config.theme === "light") {
-    player.setAttribute("theme", "light");
     document.documentElement.style.setProperty("--bg-color", "#f8fafc");
     document.documentElement.style.setProperty("--text-color", "#0f172a");
+    wasmPlayer.setAttribute("theme", "light");
   } else {
-    player.setAttribute("theme", "dark");
+    wasmPlayer.setAttribute("theme", "dark");
   }
 
-  if (config.controls) {
-    player.setAttribute("controls", "");
-  } else {
-    player.removeAttribute("controls");
-  }
+  const effectiveFit = config.fit === "fill" ? "fill" : config.fit === "cover" ? "cover" : config.fit === "zoom" ? "zoom" : "contain";
+  wasmPlayer.setAttribute("objectfit", effectiveFit);
+  wasmPlayer.setAttribute("posterfit", effectiveFit);
 
-  if (config.autoplay) {
-    player.setAttribute("autoplay", "");
-    player.setAttribute("muted", "");
-  }
+  let activeEngine: "wasm" | "native" = "wasm";
+  let nativePlayer: NativeCkinPlayer | null = null;
 
-  if (config.muted) {
-    player.setAttribute("muted", "");
-  }
-
-  if (config.loop) {
-    player.setAttribute("loop", "");
-  }
-
-  if (config.ambient) {
-    player.setAttribute("ambientmode", "");
-  }
-
-  if (config.title) {
-    player.setAttribute("title", config.title);
-    player.setAttribute("showtitle", "");
-  }
-
-  player.setAttribute("poster", config.poster || "/assets/img/image.png");
-
-  if (config.starttime && config.starttime > 0) {
-    player.setAttribute("startat", String(config.starttime));
-  }
-
-  const targetUrl = config.url || config.src;
-  if (targetUrl) {
-    player.src = targetUrl;
-  }
+  attachFullscreenWatermark(wasmPlayer);
 
   const postToParent = (event: string, payload?: any): void => {
     if (window.parent && window.parent !== window) {
+      const activeObj = activeEngine === "native" && nativePlayer ? nativePlayer.video : wasmPlayer;
       window.parent.postMessage({
         source: "vidembed",
         event,
         payload: payload || {
-          currentTime: player.currentTime || 0,
-          duration: player.duration || 0,
-          paused: player.paused !== undefined ? player.paused : true,
-          muted: player.muted || false,
-          volume: player.volume !== undefined ? player.volume : 1
+          currentTime: activeObj?.currentTime || 0,
+          duration: activeObj?.duration || 0,
+          paused: activeObj?.paused ?? true,
+          muted: activeObj?.muted ?? false,
+          volume: activeObj?.volume ?? 1
         }
       }, "*");
     }
   };
 
-  const bindEvent = (name: string, mapping?: string): void => {
-    player.addEventListener(name, () => {
-      postToParent(mapping || name, {
-        currentTime: player.currentTime || 0,
-        duration: player.duration || 0,
-        paused: player.paused !== undefined ? player.paused : true,
-        muted: player.muted || false,
-        volume: player.volume !== undefined ? player.volume : 1
+  const switchToNativeFallback = (): void => {
+    if (activeEngine === "native") return;
+    activeEngine = "native";
+
+    try { wasmPlayer.pause(); } catch {}
+    wasmPlayer.style.display = "none";
+    nativeContainer.style.display = "block";
+
+    if (!nativePlayer) {
+      nativePlayer = new NativeCkinPlayer(nativeContainer, {
+        src: targetUrl,
+        title: currentTitle,
+        poster: currentPoster,
+        autoplay: config.autoplay || true,
+        muted: config.muted,
+        controls: config.controls,
+        loop: config.loop,
+        ambient: config.ambient,
+        accent: config.accent,
+        starttime: config.starttime,
+        fit: effectiveFit as any
       });
-    });
+
+      nativePlayer.on("play", () => {
+        if (alertOverlay) alertOverlay.classList.remove("visible");
+        postToParent("play");
+      });
+      nativePlayer.on("pause", () => postToParent("pause"));
+      nativePlayer.on("ended", () => postToParent("ended"));
+      nativePlayer.on("timeupdate", (p) => {
+        if (alertOverlay && nativePlayer && nativePlayer.video.currentTime > 0) {
+          alertOverlay.classList.remove("visible");
+        }
+        postToParent("timeupdate", p);
+      });
+      nativePlayer.on("volumechange", (p) => postToParent("volumechange", p));
+
+      nativePlayer.on("error", (err) => {
+        if (nativePlayer && nativePlayer.video.currentTime > 0) return;
+        if (alertOverlay && alertTitle && alertDesc) {
+          alertTitle.textContent = "Playback Error";
+          alertDesc.textContent = "Could not load video source. Verify the link and availability.";
+          alertOverlay.classList.add("visible");
+        }
+        postToParent("error", err);
+      });
+    } else if (targetUrl) {
+      nativePlayer.setPoster(currentPoster);
+      nativePlayer.loadSource(targetUrl, currentTitle, config.starttime);
+      nativePlayer.play();
+    }
   };
 
-  bindEvent("play");
-  bindEvent("pause");
-  bindEvent("ended");
-  bindEvent("timeupdate");
-  bindEvent("volumechange");
-  bindEvent("ratechange");
-  bindEvent("loadedmetadata");
-  bindEvent("canplay");
+  const loadSourceWithWasmPriority = (url: string, title?: string, poster?: string, starttime?: number): void => {
+    if (alertOverlay) alertOverlay.classList.remove("visible");
+    targetUrl = url;
+    if (title !== undefined) currentTitle = title;
+    if (poster !== undefined) currentPoster = poster;
+    activeEngine = "wasm";
 
-  player.addEventListener("error", (e: any) => {
-    if (alertOverlay && alertTitle && alertDesc) {
-      alertTitle.textContent = "Playback Error";
-      alertDesc.textContent = "Could not load video source. If this is a cross-origin resource, make sure CORS headers are supported.";
-      alertOverlay.classList.add("visible");
+    if (nativePlayer) {
+      try { nativePlayer.pause(); } catch {}
     }
-    postToParent("error", { error: e?.message || "Playback error" });
+    nativeContainer.style.display = "none";
+    wasmPlayer.style.display = "block";
+
+    if (currentTitle) wasmPlayer.setAttribute("title", currentTitle);
+    wasmPlayer.setAttribute("poster", currentPoster);
+    if (starttime && starttime > 0) {
+      wasmPlayer.setAttribute("startat", String(starttime));
+    }
+    wasmPlayer.src = url;
+    wasmPlayer.play().catch(() => {});
+  };
+
+  if (config.controls) {
+    wasmPlayer.setAttribute("controls", "");
+  } else {
+    wasmPlayer.removeAttribute("controls");
+  }
+
+  if (config.autoplay) {
+    wasmPlayer.setAttribute("autoplay", "");
+    wasmPlayer.setAttribute("muted", "");
+  }
+
+  if (config.muted) {
+    wasmPlayer.setAttribute("muted", "");
+  }
+
+  if (config.loop) {
+    wasmPlayer.setAttribute("loop", "");
+  }
+
+  if (config.ambient) {
+    wasmPlayer.setAttribute("ambientmode", "");
+  }
+
+  if (config.title) {
+    wasmPlayer.setAttribute("title", config.title);
+    wasmPlayer.setAttribute("showtitle", "");
+  }
+
+  wasmPlayer.setAttribute("poster", currentPoster);
+
+  if (config.starttime && config.starttime > 0) {
+    wasmPlayer.setAttribute("startat", String(config.starttime));
+  }
+
+  wasmPlayer.addEventListener("play", () => {
+    if (alertOverlay) alertOverlay.classList.remove("visible");
+    postToParent("play");
+  });
+  wasmPlayer.addEventListener("pause", () => postToParent("pause"));
+  wasmPlayer.addEventListener("ended", () => postToParent("ended"));
+  wasmPlayer.addEventListener("timeupdate", () => postToParent("timeupdate"));
+  wasmPlayer.addEventListener("volumechange", () => postToParent("volumechange"));
+
+  wasmPlayer.addEventListener("error", () => {
+    switchToNativeFallback();
   });
 
-  player.addEventListener("errordisplay", (e: any) => {
-    if (alertOverlay && alertTitle && alertDesc) {
-      alertTitle.textContent = e.detail?.title || "Codec / Stream Error";
-      alertDesc.textContent = e.detail?.message || "Unable to play stream format.";
-      alertOverlay.classList.add("visible");
-    }
-    postToParent("error", e.detail);
+  wasmPlayer.addEventListener("errordisplay", () => {
+    switchToNativeFallback();
   });
+
+  if (targetUrl) {
+    wasmPlayer.src = targetUrl;
+    wasmPlayer.play().catch(() => {});
+  }
 
   if (retryBtn) {
     retryBtn.addEventListener("click", () => {
       if (alertOverlay) alertOverlay.classList.remove("visible");
       if (targetUrl) {
-        player.src = "";
-        player.src = targetUrl;
-        player.play().catch(() => {});
+        loadSourceWithWasmPriority(targetUrl, currentTitle, currentPoster);
       }
     });
   }
@@ -190,40 +261,68 @@ function initEmbedPlayer(): void {
     const data = e.data;
     if (!data || data.source !== "vidembed-host") return;
 
-    switch (data.action) {
-      case "play":
-        player.play().catch(() => {});
-        break;
-      case "pause":
-        player.pause();
-        break;
-      case "seek":
-        if (typeof data.value === "number") {
-          player.currentTime = data.value;
-        }
-        break;
-      case "setVolume":
-        if (typeof data.value === "number") {
-          player.volume = Math.max(0, Math.min(1, data.value));
-        }
-        break;
-      case "setMuted":
-        player.muted = !!data.value;
-        break;
-      case "setSpeed":
-        if (typeof data.value === "number") {
-          player.playbackRate = data.value;
-        }
-        break;
-      case "loadSource":
-        if (typeof data.value === "string") {
-          if (alertOverlay) alertOverlay.classList.remove("visible");
-          if (data.title) player.setAttribute("title", data.title);
-          player.setAttribute("poster", data.poster || "/assets/img/image.png");
-          player.src = data.value;
-          player.play().catch(() => {});
-        }
-        break;
+    if (data.action === "loadSource" && typeof data.value === "string") {
+      loadSourceWithWasmPriority(data.value, data.title, data.poster, data.starttime);
+      return;
+    }
+
+    if (activeEngine === "native" && nativePlayer) {
+      switch (data.action) {
+        case "play":
+          nativePlayer.play();
+          break;
+        case "pause":
+          nativePlayer.pause();
+          break;
+        case "seek":
+          if (typeof data.value === "number") nativePlayer.seek(data.value);
+          break;
+        case "setVolume":
+          if (typeof data.value === "number") nativePlayer.setVolume(data.value);
+          break;
+        case "setMuted":
+          nativePlayer.setMuted(!!data.value);
+          break;
+        case "setSpeed":
+          if (typeof data.value === "number") nativePlayer.setSpeed(data.value);
+          break;
+        case "setAspect":
+        case "setFit":
+          if (typeof data.value === "string") {
+            const normalized = data.value === "fit" ? "contain" : data.value;
+            nativePlayer.setFit(normalized);
+          }
+          break;
+      }
+    } else {
+      switch (data.action) {
+        case "play":
+          wasmPlayer.play().catch(() => {});
+          break;
+        case "pause":
+          wasmPlayer.pause();
+          break;
+        case "seek":
+          if (typeof data.value === "number") wasmPlayer.currentTime = data.value;
+          break;
+        case "setVolume":
+          if (typeof data.value === "number") wasmPlayer.volume = Math.max(0, Math.min(1, data.value));
+          break;
+        case "setMuted":
+          wasmPlayer.muted = !!data.value;
+          break;
+        case "setSpeed":
+          if (typeof data.value === "number") wasmPlayer.playbackRate = data.value;
+          break;
+        case "setAspect":
+        case "setFit":
+          if (typeof data.value === "string") {
+            const normalized = data.value === "fit" ? "contain" : data.value;
+            wasmPlayer.setAttribute("objectfit", normalized);
+            wasmPlayer.setAttribute("posterfit", normalized);
+          }
+          break;
+      }
     }
   });
 

@@ -42,6 +42,14 @@
           </svg>
           <span>Demo</span>
         </a>
+        <a href="/auto?type=movie&id=1236045&title=Animals&brand=SumanMovies" target="_blank" rel="noopener" class="nav-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="7" rx="2"></rect>
+            <rect x="2" y="14" width="20" height="7" rx="2"></rect>
+          </svg>
+          <span class="nav-text-desktop">Auto Stream</span>
+          <span class="nav-text-mobile">Auto</span>
+        </a>
         <a href="/embed?url=https://lorem.video/720p.mp4&title=720p+Test+Video" target="_blank" rel="noopener" class="nav-btn primary">
           <span class="nav-text-desktop">Launch Embed</span>
           <span class="nav-text-mobile">Embed</span>
@@ -144,13 +152,16 @@
           controls
           playsinline
           fastseek
-          objectfit="control"
+          objectfit="contain"
+          posterfit="contain"
           showtitle
           ambientmode
           ambientwrapper="ambient-glow-layer"
           poster="/assets/img/image.png"
           wasmurl="/movi.wasm"
+          style="width: 100%; height: 100%;"
         ></movi-player>
+        <div id="native-stage-container" style="display: none; width: 100%; height: 100%;"></div>
         <div class="player-standby-overlay" id="stage-standby-overlay">
           <div class="standby-card">
             <div class="standby-icon">
@@ -250,6 +261,16 @@
                   <option value="light">Light</option>
                   <option value="midnight">Midnight</option>
                   <option value="cyberpunk">Cyberpunk</option>
+                </select>
+              </div>
+
+              <div class="toggle-row">
+                <span>Aspect Ratio</span>
+                <select id="cfg-aspect" class="field-input" style="width: auto; padding: 4px 10px; height: 32px;">
+                  <option value="contain" selected>Fit (Default)</option>
+                  <option value="cover">Fill</option>
+                  <option value="fill">Stretch</option>
+                  <option value="zoom">Zoom</option>
                 </select>
               </div>
             </div>

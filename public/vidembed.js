@@ -29,6 +29,8 @@
     if (options.theme) params.set("theme", options.theme);
     if (options.accent) params.set("accent", options.accent);
     if (options.ambient !== undefined) params.set("ambient", options.ambient ? "1" : "0");
+    if (options.fit) params.set("fit", options.fit);
+    if (options.aspect) params.set("aspect", options.aspect);
 
     var fullSrc = baseUrl + "?" + params.toString();
 
