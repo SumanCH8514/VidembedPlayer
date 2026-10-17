@@ -1,6 +1,6 @@
 import { StreamApiResponse, HealthApiResponse, MediaMetadata } from "../types";
 
-const BASE_API = "https://api.thugtv.online/api/stream";
+const BASE_API = "/api/stream";
 const TMDB_PROXY = "https://proxy.tmdb.sumanonline.com/3";
 
 export function buildWsrvArtworkUrl(

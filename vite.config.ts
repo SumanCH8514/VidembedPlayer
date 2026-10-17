@@ -8,6 +8,9 @@ function cleanUrlsPlugin(): Plugin {
   const handler = (req: any, res: any, next: any) => {
     if (req.url) {
       const [pathname, search] = req.url.split("?");
+      if (pathname.startsWith("/api/")) {
+        return next();
+      }
       if (pathname.endsWith(".html") && pathname !== "/index.html") {
         const clean = pathname.slice(0, -5);
         const targetFile = resolve(rootDir, `.${clean}.html`);
@@ -56,7 +59,14 @@ function cleanUrlsPlugin(): Plugin {
 
 export default defineConfig({
   server: {
-    port: 3000
+    port: 3000,
+    proxy: {
+      "/api/stream": {
+        target: "https://api.thugtv.online",
+        changeOrigin: true,
+        secure: false
+      }
+    }
   },
   plugins: [cleanUrlsPlugin()],
   build: {

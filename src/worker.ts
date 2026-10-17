@@ -22,6 +22,36 @@ export default {
       });
     }
 
+    if (pathname.startsWith("/api/stream/")) {
+      const targetUrl = `https://api.thugtv.online${pathname}${search}`;
+      try {
+        const apiRes = await fetch(targetUrl, {
+          method: request.method,
+          headers: {
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+          }
+        });
+        const headers = new Headers(apiRes.headers);
+        headers.set("Access-Control-Allow-Origin", "*");
+        headers.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
+        headers.set("Access-Control-Allow-Headers", "*");
+        return new Response(apiRes.body, {
+          status: apiRes.status,
+          statusText: apiRes.statusText,
+          headers
+        });
+      } catch {
+        return new Response(JSON.stringify({ sources: [], pending: false }), {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          }
+        });
+      }
+    }
+
     if (pathname.endsWith(".html") && pathname !== "/index.html") {
       const cleanPath = pathname.slice(0, -5);
       return Response.redirect(`${url.origin}${cleanPath}${search}`, 301);
