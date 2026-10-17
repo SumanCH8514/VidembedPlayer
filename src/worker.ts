@@ -1,3 +1,7 @@
+interface Fetcher {
+  fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
+}
+
 interface Env {
   ASSETS: Fetcher;
 }
@@ -27,7 +31,11 @@ export default {
 
     if (!pathname.includes(".") && pathname !== "/") {
       const clean = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
-      const htmlUrl = new URL(`${clean}.html${search}`, request.url);
+      let targetHtml = `${clean}.html`;
+      if (clean === "/auto" && (url.searchParams.get("embed") === "1" || url.searchParams.get("plain") === "1")) {
+        targetHtml = "auto-embed.html";
+      }
+      const htmlUrl = new URL(`${targetHtml}${search}`, request.url);
       assetResponse = await env.ASSETS.fetch(new Request(htmlUrl.toString(), request));
       if (assetResponse.status === 404) {
         assetResponse = await env.ASSETS.fetch(request);

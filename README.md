@@ -1,40 +1,43 @@
-# VidEmbed Studio
+# VidEmbed Player
 
-> **Universal Client-Side Video Player & Embed Platform**  
-> Play any video format directly in the browser with WebCodecs & FFmpeg WASM — zero server transcoding required.
-
----
+> Universal Client-Side Video Engine & Auto Streaming Studio for the Modern Web.
 
 [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Hls.js](https://img.shields.io/badge/HLS.js-Adaptive%20VOD-orange?style=flat-square)](https://github.com/video-dev/hls.js)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers%20%26%20Pages-F38020?style=flat-square&logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Organization](https://img.shields.io/badge/Maintained%20by-SumanOnline%20Web%20Services-blueviolet?style=flat-square)](https://sumanonline.com)
 
-VidEmbed Studio is a high-performance web-based video player and embed generator. It delivers native, hardware-accelerated playback for non-native web containers (such as MKV, AVI, and TS) alongside standard web formats (MP4, WebM, HLS). By combining client-side demuxing with WebCodecs and WebAssembly, VidEmbed eliminates expensive server-side transcode pipelines while providing a production-grade embed solution.
+VidEmbed Player is a high-performance web media architecture and embed studio engineered for high-traffic streaming hubs, developers, and media portals. It combines a client-side zero-transcode player engine with an autonomous multi-server failover streaming suite.
+
+By leveraging browser WebCodecs, WebAssembly demuxing, and optimized HLS adaptive bitrate streaming, VidEmbed delivers smooth, hardware-accelerated playback across desktop and mobile devices without requiring expensive server-side transcoding clusters.
 
 ---
 
-## Key Features
+## Features
 
-- **Universal Container Support**: Plays MKV, MP4, AVI, WebM, MOV, and HLS (.m3u8) streams client-side without backend re-encoding.
-- **Hardware Acceleration**: Utilizes browser WebCodecs and FFmpeg WASM for low-latency, smooth decoding.
-- **Portable Embed Engine**: Generates standalone, responsive iframe embeds with customizable parameters (`autoplay`, `loop`, `controls`, `theme`).
-- **Dynamic Security Watermarking**: Built-in client-side canvas watermarking with dynamic timestamping and customizable positioning for anti-rip protection.
-- **Bi-directional JavaScript SDK**: Lightweight postMessage-based SDK (`VidEmbedPlayer`) for remote control and playback telemetry.
-- **Developer Studio UI**: Interactive URL query builder, live playback previewer, embed code generator, and API playground.
-- **Zero Heavy Dependencies**: Clean, modern design built with Vanilla CSS variables, high-contrast dark mode, and TypeScript.
+- **Universal Container Playback**: Directly decodes MKV, AVI, MP4, WebM, MOV, and HLS (`.m3u8`) files in the browser without server-side re-encoding.
+- **Autonomous Multi-Server Failover**: Real-time CDN edge discovery with automatic failover across live streaming nodes for 99.99% uptime.
+- **Adaptive Bitrate & Multi-Audio**: Intelligent ABR quality switching (`1080p`, `720p`, `480p`, `Auto`) paired with multi-channel language track selection.
+- **Hardware-Accelerated UI**: 60fps GPU-composited interface featuring custom scrub bars, double-tap seek ripples, and responsive cinema controls.
+- **Zero-Overhead Standalone Embeds**: Dedicated lightweight player shells (`< 3KB`) optimized for low-latency iframe embedding without main-thread DOM bloat.
+- **Interactive Embed Studio**: Real-time URL query customizer, dynamic brand watermark injection, live server telemetry, and instant code generation (Iframe, Direct URL, JS SDK).
+- **Dynamic Security Watermarking**: Client-side canvas watermarking with customizable text, positioning, and timestamp overlays to deter content ripping.
+- **Mobile-First Gestures**: Dual-zone touch navigation, tap-to-seek intervals, Picture-in-Picture (PiP), and native aspect ratio controls (`Fit`, `Fill`, `Stretch`).
 
 ---
 
 ## Tech Stack
 
-| Category | Technology | Purpose |
+| Domain | Technology | Description |
 | :--- | :--- | :--- |
-| **Frontend Framework** | Vanilla TypeScript & HTML5 | Lightweight, standards-based foundation |
-| **Video Engine** | Movi-Player / FFmpeg WASM | Client-side container demuxing & WebCodecs |
-| **Styling** | Modern CSS3 (Custom Design System) | Glassmorphism, CSS Grid, full mobile responsiveness |
-| **Build & Tooling** | Vite 5.x | Ultra-fast HMR and optimized production bundling |
-| **Integration** | Custom JavaScript SDK (`postMessage`) | Headless cross-origin embed communications |
+| **Language & Core** | TypeScript 5.5 | Strictly-typed application logic and data contracts |
+| **Build & Dev Server** | Vite 5.4 | Ultra-fast Hot Module Replacement (HMR) and optimized rollup bundling |
+| **Stream Engine** | HLS.js & WebCodecs | Buffer-optimized VOD streaming and client-side container demuxing |
+| **Styling** | Modern CSS3 | Custom design system, CSS Grid, hardware acceleration, glassmorphism |
+| **Deployment** | Cloudflare Workers & Pages | Global edge caching, clean URL rewriting, and zero-cold-start delivery |
+| **Metadata Integration** | TMDB & IMDb Proxy | Automated artwork generation via wsrv.nl and metadata resolution |
 
 ---
 
@@ -42,22 +45,31 @@ VidEmbed Studio is a high-performance web-based video player and embed generator
 
 ```text
 VidembedPlayer/
-├── public/                 # Static assets and icons
+├── public/                 # Static assets, branding icons, and favicons
 ├── src/
-│   ├── sdk/
-│   │   └── vidembed.ts     # Client-side JavaScript SDK
-│   ├── utils/
-│   │   └── watermark.ts    # Canvas security overlay engine
-│   ├── embed.ts            # Lightweight embed runtime entry
-│   ├── main.ts             # Studio dashboard controller
-│   └── style.css           # Design tokens, themes & layout styles
-├── docs.html               # Comprehensive API & parameter documentation
-├── embed.html              # Standalone embed player page
-├── index.html              # Main studio dashboard & generator
-├── test-embed.html         # SDK verification & test harness
-├── package.json
-├── tsconfig.json
-└── vite.config.ts
+│   ├── auto/               # Autonomous Multi-Server Streaming Suite
+│   │   ├── services/       # Stream discovery, health checks & TMDB APIs
+│   │   ├── autoPlayer.ts   # Core playback lifecycle and HLS controller
+│   │   ├── autoPlayer.css  # Hardware-accelerated player design system
+│   │   ├── autoStudio.ts   # Interactive embed studio dashboard & generator
+│   │   ├── autoStudio.css  # Studio layout and telemetry visual tokens
+│   │   ├── autoEmbed.ts    # Standalone lightweight embed entry point
+│   │   └── types.ts        # Media schemas, server contracts, and configurations
+│   ├── player/             # Native HTML5 and WebCodecs playback fallback
+│   ├── sdk/                # Modular client-side JavaScript SDK
+│   ├── utils/              # Canvas watermark and utility modules
+│   ├── style.css           # Global design system tokens and components
+│   ├── main.ts             # Main universal studio controller
+│   └── worker.ts           # Cloudflare Worker edge router
+├── auto.html               # Auto Stream Studio & Configurator
+├── auto-embed.html         # Ultra-lightweight standalone embed shell
+├── embed.html              # Universal player embed shell
+├── docs.html               # Full API parameter and SDK documentation
+├── index.html              # Main Universal Video Studio
+├── package.json            # Project dependencies and script tasks
+├── tsconfig.json           # TypeScript configuration
+├── vite.config.ts          # Vite multi-page build & clean routing plugins
+└── wrangler.json           # Cloudflare Workers deployment configuration
 ```
 
 ---
@@ -66,8 +78,8 @@ VidembedPlayer/
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (version 18.0.0 or higher recommended)
-- [npm](https://www.npmjs.com/) (version 9.0.0 or higher)
+- [Node.js](https://nodejs.org/) (v18.0.0 or higher recommended)
+- [npm](https://www.npmjs.com/) (v9.0.0 or higher)
 
 ### Installation
 
@@ -87,100 +99,116 @@ VidembedPlayer/
    npm run dev
    ```
 
-4. **Access the application**
-   Open your browser and navigate to `http://localhost:5173`.
+4. **Open in your browser**
+   - Universal Studio: `http://localhost:3000`
+   - Auto Stream Studio: `http://localhost:3000/auto`
 
 ---
 
-## Usage
+## Usage Examples
 
-### 1. Direct Embed URL
+### 1. Auto Stream Responsive Iframe Embed
 
-You can embed any video source by linking directly to `/embed` with query parameters:
+Embed any TMDB movie or television episode with custom player branding:
 
 ```html
 <iframe
-  src="https://your-domain.com/embed?url=https://example.com/video.mkv&title=Demo+Video&autoplay=1&muted=1"
+  src="https://your-domain.com/auto?type=movie&id=1236045&brand=SumanMovies&color=06b6d4&embed=1"
   width="100%"
-  height="480"
+  height="100%"
   frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowfullscreen>
+  scrolling="no"
+  allowfullscreen
+  allow="autoplay; encrypted-media; picture-in-picture">
 </iframe>
 ```
 
-### 2. Supported Query Parameters
+### 2. Direct Player Link
 
-| Parameter | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `url` | `string` | *required* | Encoded URL of the media file (MP4, MKV, WebM, HLS) |
-| `title` | `string` | `""` | Video title displayed in top overlay |
-| `poster` | `string` | `""` | Poster image URL shown before playback starts |
-| `autoplay` | `boolean` | `0` | Automatically start playback (`1` or `0`) |
-| `muted` | `boolean` | `0` | Start playback in muted state (`1` or `0`) |
-| `loop` | `boolean` | `0` | Loop playback continuously (`1` or `0`) |
-| `controls` | `boolean` | `1` | Show player control bar (`1` or `0`) |
-| `wm` | `string` | `""` | Watermark text overlay for DRM/attribution |
+Open standalone cinema mode directly in any browser:
+
+```text
+https://your-domain.com/auto?type=movie&id=1236045&brand=SumanMovies&color=06b6d4&embed=1
+```
+
+For episodic TV series:
+
+```text
+https://your-domain.com/auto?type=tv&id=94997&s=1&e=1&brand=SumanMovies&color=06b6d4&embed=1
+```
 
 ### 3. Programmatic JavaScript SDK
 
-Control the player and listen for playback events across origins:
+Mount the autonomous player directly inside any DOM container:
 
-```typescript
-import { VidEmbedPlayer } from './src/sdk/vidembed';
+```html
+<div id="player-container" style="width: 100%; aspect-ratio: 16/9;"></div>
 
-const container = document.getElementById('player-container')!;
-const player = new VidEmbedPlayer(container, {
-  url: 'https://example.com/sample.mkv',
-  title: 'Sample Playback',
-  autoplay: false,
-  muted: false,
-  watermark: 'Confidential - Preview Only'
-});
+<script type="module">
+  import { AutoPlayer } from "https://your-domain.com/src/auto/autoPlayer.ts";
 
-player.on('play', () => {
-  console.log('Video playback started');
-});
-
-player.on('timeupdate', ({ currentTime, duration }) => {
-  console.log(`Progress: ${currentTime.toFixed(1)} / ${duration.toFixed(1)}s`);
-});
+  const player = new AutoPlayer(document.getElementById("player-container"), {
+    type: "movie",
+    id: "1236045",
+    brand: "SumanMovies",
+    color: "#06b6d4",
+    fit: "contain",
+    autoplay: true,
+    muted: false
+  });
+</script>
 ```
+
+---
+
+## URL Parameters Reference
+
+| Parameter | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `type` | `"movie"` \| `"tv"` | `"movie"` | Media classification |
+| `id` | `string` | — | TMDB ID or IMDb ID (e.g., `1236045` or `tt1375666`) |
+| `s` | `number` | `1` | Season index for television content |
+| `e` | `number` | `1` | Episode index for television content |
+| `brand` | `string` | `"VidEmbed"` | Brand watermark text displayed in the header pill |
+| `color` | `string` | `"#06b6d4"` | Primary player accent color (Hex string) |
+| `fit` | `"contain"` \| `"cover"` \| `"fill"` | `"contain"` | Initial video viewport object-fit mode |
+| `autoplay` | `"1"` \| `"0"` | `"0"` | Attempt automatic playback on initial load |
+| `muted` | `"1"` \| `"0"` | `"0"` | Initialize player audio in muted state |
+| `embed` | `"1"` \| `"0"` | `"0"` | Launch directly into standalone player mode |
 
 ---
 
 ## Preview & Demos
 
-| Studio Dashboard | Standalone Embed Player |
+| Auto Stream Studio Dashboard | Standalone Cinema Player |
 | :---: | :---: |
-| ![Studio Dashboard](https://raw.githubusercontent.com/SumanCH8514/VidembedPlayer/main/public/preview-dashboard.png) | ![Embed Player](https://raw.githubusercontent.com/SumanCH8514/VidembedPlayer/main/public/preview-player.png) |
-
-> *Note: Replace preview images with production screenshots upon release.*
+| ![Studio Dashboard](https://raw.githubusercontent.com/SumanCH8514/VidembedPlayer/main/public/preview-dashboard.png) | ![Cinema Player](https://raw.githubusercontent.com/SumanCH8514/VidembedPlayer/main/public/preview-player.png) |
 
 ---
 
 ## Contributing
 
-Contributions make the open-source community an inspiring place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+Contributions make the developer community an open and productive place. Any improvements, bug fixes, or enhancements are welcome.
 
 1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m "Add some AmazingFeature"`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+2. Create your Feature Branch (`git checkout -b feature/NewFeature`)
+3. Commit your Changes (`git commit -m "Add NewFeature"`)
+4. Push to the Branch (`git push origin feature/NewFeature`)
 5. Open a Pull Request
 
 ---
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+Distributed under the MIT License. See [LICENSE](LICENSE) for full licensing information.
 
 ---
 
-## Organization & Contact
+## Author & Contact
 
 Built, designed, and maintained by **SumanOnline Web Services**.
 
-- **Website**: [SumanOnline.Com](https://sumanonline.com)
+- **Organization**: [SumanOnline Web Services](https://sumanonline.com)
+- **Official Website**: [SumanOnline.Com](https://sumanonline.com)
 - **GitHub**: [@SumanCH8514](https://github.com/SumanCH8514)
 - **Repository**: [https://github.com/SumanCH8514/VidembedPlayer](https://github.com/SumanCH8514/VidembedPlayer)

@@ -4,6 +4,13 @@ export interface QualityVariant {
 }
 
 export interface AudioStream {
+  id?: string;
+  lang: string;
+  label: string;
+  url?: string;
+}
+
+export interface SubtitleTrack {
   lang: string;
   label: string;
   url: string;
@@ -18,6 +25,7 @@ export interface StreamSource {
   quality?: string;
   qualityVariants?: QualityVariant[];
   audioStreams?: AudioStream[];
+  subtitles?: SubtitleTrack[];
   resolvePath?: string;
 }
 

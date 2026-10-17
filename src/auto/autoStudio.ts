@@ -15,6 +15,7 @@ if (isEmbed) {
   document.body.classList.add("is-embed-mode");
   const root = document.getElementById("auto-player-root");
   if (root) {
+    document.body.appendChild(root);
     root.dataset.initialized = "true";
     new AutoPlayer(root);
   }
@@ -28,7 +29,7 @@ function initStudio(): void {
 
   const urlParams = new URLSearchParams(window.location.search);
   let currentType: "movie" | "tv" = (urlParams.get("type") as "movie" | "tv") || (urlParams.get("s") ? "tv" : "movie");
-  let currentId: string = urlParams.get("id") || urlParams.get("tmdb") || (currentType === "tv" ? "123542" : "1236045");
+  let currentId: string = urlParams.get("id") || urlParams.get("tmdb") || "";
   let currentSeason: number = parseInt(urlParams.get("s") || urlParams.get("season") || "1", 10);
   let currentEpisode: number = parseInt(urlParams.get("e") || urlParams.get("episode") || "1", 10);
   let currentBrand: string = urlParams.get("brand") || "SumanMovies";
@@ -36,7 +37,7 @@ function initStudio(): void {
   let currentAutoplay: boolean = urlParams.get("autoplay") === "1";
   let currentMuted: boolean = urlParams.get("muted") === "1";
   let currentFit: "contain" | "cover" | "fill" = (urlParams.get("fit") as "contain" | "cover" | "fill") || "contain";
-  let activeTab: "iframe" | "link" | "sdk" | "api" = "iframe";
+  let activeTab: "iframe" | "link" | "sdk" = "iframe";
 
   let activePlayer: AutoPlayer | null = null;
 
@@ -50,6 +51,7 @@ function initStudio(): void {
   const presetChips = document.querySelectorAll<HTMLButtonElement>(".studio-preset-chip");
 
   const posterImg = document.getElementById("studio-poster-img") as HTMLImageElement | null;
+  const posterPlaceholder = document.getElementById("studio-poster-placeholder") as HTMLElement | null;
   const titleEl = document.getElementById("studio-title") as HTMLElement | null;
   const yearEl = document.getElementById("studio-year") as HTMLElement | null;
   const ratingEl = document.getElementById("studio-rating") as HTMLElement | null;
@@ -75,7 +77,7 @@ function initStudio(): void {
   const tabIframe = document.getElementById("tab-code-iframe") as HTMLButtonElement | null;
   const tabLink = document.getElementById("tab-code-link") as HTMLButtonElement | null;
   const tabSdk = document.getElementById("tab-code-sdk") as HTMLButtonElement | null;
-  const tabApi = document.getElementById("tab-code-api") as HTMLButtonElement | null;
+  const tabLabel = document.getElementById("studio-tab-label") as HTMLElement | null;
   const codeOutput = document.getElementById("studio-code-output") as HTMLElement | null;
   const copyBtn = document.getElementById("studio-btn-copy") as HTMLButtonElement | null;
   const sandboxBtn = document.getElementById("studio-btn-sandbox") as HTMLButtonElement | null;
@@ -112,7 +114,7 @@ function initStudio(): void {
       typeBtnTv?.classList.add("active");
       typeBtnMovie?.classList.remove("active");
       if (seasonGroup) seasonGroup.style.display = "flex";
-      if (idInput) idInput.placeholder = "Enter TMDB TV ID (e.g. 123542) or IMDb ID...";
+      if (idInput) idInput.placeholder = "Enter TMDB TV ID (e.g. 94997) or IMDb ID...";
     }
   }
 
@@ -120,7 +122,7 @@ function initStudio(): void {
     presetChips.forEach((chip) => {
       const pType = chip.getAttribute("data-type");
       const pId = chip.getAttribute("data-id");
-      if (pType === currentType && pId === currentId) {
+      if (currentId && pType === currentType && pId === currentId) {
         chip.classList.add("active");
       } else {
         chip.classList.remove("active");
@@ -133,7 +135,7 @@ function initStudio(): void {
     const cleanColor = currentColor.replace("#", "");
     const q = new URLSearchParams();
     q.set("type", currentType);
-    q.set("id", currentId);
+    q.set("id", currentId || "YOUR_ID");
     if (currentType === "tv") {
       q.set("s", String(currentSeason));
       q.set("e", String(currentEpisode));
@@ -148,19 +150,7 @@ function initStudio(): void {
   }
 
   function getDirectUrl(): string {
-    const origin = window.location.origin;
-    const cleanColor = currentColor.replace("#", "");
-    const q = new URLSearchParams();
-    q.set("type", currentType);
-    q.set("id", currentId);
-    if (currentType === "tv") {
-      q.set("s", String(currentSeason));
-      q.set("e", String(currentEpisode));
-    }
-    if (currentBrand) q.set("brand", currentBrand);
-    if (cleanColor) q.set("color", cleanColor);
-    if (currentFit && currentFit !== "contain") q.set("fit", currentFit);
-    return `${origin}/auto?${q.toString()}`;
+    return getEmbedUrl();
   }
 
   function renderCode(): void {
@@ -169,16 +159,14 @@ function initStudio(): void {
     const directUrl = getDirectUrl();
 
     if (activeTab === "iframe") {
+      if (tabLabel) tabLabel.textContent = "Responsive Iframe Snippet";
       codeOutput.textContent = `<iframe\n  src="${embedUrl}"\n  width="100%"\n  height="100%"\n  frameborder="0"\n  scrolling="no"\n  allowfullscreen\n  allow="autoplay; encrypted-media; picture-in-picture">\n</iframe>`;
     } else if (activeTab === "link") {
+      if (tabLabel) tabLabel.textContent = "Direct Player URL";
       codeOutput.textContent = directUrl;
     } else if (activeTab === "sdk") {
+      if (tabLabel) tabLabel.textContent = "Modular JavaScript SDK";
       codeOutput.textContent = `<div id="auto-stream-container" style="width:100%;aspect-ratio:16/9;"></div>\n<script type="module">\n  import { AutoPlayer } from "${window.location.origin}/src/auto/autoPlayer.ts";\n  const player = new AutoPlayer(document.getElementById("auto-stream-container"), {\n    type: "${currentType}",\n    id: "${currentId}",${currentType === "tv" ? `\n    season: ${currentSeason},\n    episode: ${currentEpisode},` : ""}\n    brand: "${currentBrand}",\n    color: "${currentColor}",\n    fit: "${currentFit}",\n    autoplay: ${currentAutoplay},\n    muted: ${currentMuted}\n  });\n</script>`;
-    } else if (activeTab === "api") {
-      const endpoint = currentType === "tv"
-        ? `https://api.thugtv.online/api/stream/tv/${currentId}/${currentSeason}/${currentEpisode}`
-        : `https://api.thugtv.online/api/stream/movie/${currentId}`;
-      codeOutput.textContent = `GET ${endpoint}\nAccept: application/json\n\nGET ${endpoint.replace("/stream/", "/stream/health/")}`;
     }
   }
 
@@ -192,6 +180,10 @@ function initStudio(): void {
   }
 
   async function loadStream(syncUrl: boolean = true): Promise<void> {
+    if (!currentId) {
+      renderIdleState();
+      return;
+    }
     updateTypeUI();
     highlightPresetChip();
 
@@ -213,7 +205,7 @@ function initStudio(): void {
     if (healthServersEl) healthServersEl.textContent = "Resolving servers...";
     if (healthStreamEl) healthStreamEl.textContent = "Checking edge latency...";
 
-    const metaPromise = fetchMediaDetails(currentType, currentId);
+    const metaPromise = fetchMediaDetails(currentType, currentId, currentSeason, currentEpisode);
     const sourcesPromise = fetchStreamSources(currentType, currentId, currentSeason, currentEpisode);
     const healthPromise = fetchStreamHealth(currentType, currentId, currentSeason, currentEpisode);
 
@@ -225,7 +217,9 @@ function initStudio(): void {
     if (ratingEl) ratingEl.textContent = `★ ${meta.rating || 8.0}/10`;
     if (contentRatingEl) contentRatingEl.textContent = meta.contentRating || (currentType === "tv" ? "TV-MA" : "PG-13");
     if (overviewEl) overviewEl.textContent = meta.overview || "High-speed multi-server streaming source ready for instant playback.";
+    if (posterPlaceholder) posterPlaceholder.style.display = "none";
     if (posterImg && meta.posterUrl) {
+      posterImg.style.display = "block";
       posterImg.src = meta.posterUrl;
       posterImg.alt = `${meta.title} Poster`;
     }
@@ -299,33 +293,94 @@ function initStudio(): void {
     renderCode();
   }
 
+  function renderIdleState(): void {
+    updateTypeUI();
+    highlightPresetChip();
+    if (activePlayer) {
+      activePlayer.destroy();
+      activePlayer = null;
+    }
+    const playerTarget = document.getElementById("auto-player-root");
+    if (playerTarget) {
+      playerTarget.innerHTML = `
+        <div class="studio-stage-idle">
+          <div class="studio-stage-idle-content">
+            <div class="studio-stage-idle-icon">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </div>
+            <div class="studio-stage-idle-title">Select a Preset or Enter an ID</div>
+            <div class="studio-stage-idle-sub">Click any Popular Preset chip above or enter a TMDB/IMDb ID to start streaming.</div>
+            <div class="studio-stage-idle-badges">
+              <span class="studio-idle-badge">Castle HLS 1080p</span>
+              <span class="studio-idle-badge">Multi-Audio &amp; Subtitles</span>
+              <span class="studio-idle-badge">Edge CDN Failover</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    if (posterPlaceholder) posterPlaceholder.style.display = "flex";
+    if (posterImg) posterImg.style.display = "none";
+    if (titleEl) titleEl.textContent = "Ready to Stream";
+    if (yearEl) yearEl.textContent = "Multi-Server";
+    if (ratingEl) ratingEl.textContent = "★ Adaptive HLS";
+    if (contentRatingEl) contentRatingEl.textContent = "HD";
+    if (durationEl) durationEl.textContent = "Standby";
+    if (overviewEl) overviewEl.textContent = "Select any Popular Preset above or enter a TMDB / IMDb ID and click 'Fetch & Play' to preview live streaming sources with automated edge failover.";
+    if (genresEl) {
+      genresEl.innerHTML = `
+        <span class="studio-genre-chip">TMDB / IMDb</span>
+        <span class="studio-genre-chip">Multi-Audio</span>
+        <span class="studio-genre-chip">Subtitles</span>
+      `;
+    }
+    if (healthServersEl) healthServersEl.textContent = "12 CDN Edge Nodes Active";
+    if (healthStreamEl) healthStreamEl.textContent = "Primary: Castle (Direct HLS 1080p)";
+    if (teleEngineEl) teleEngineEl.textContent = "Castle Native HLS";
+    if (teleServerEl) teleServerEl.textContent = "Edge Node Standby";
+    if (teleAudioEl) teleAudioEl.textContent = "Original Multi-Channel Stereo";
+    if (teleAspectEl) teleAspectEl.textContent = "Fit (contain) [Default]";
+    renderCode();
+  }
+
   typeBtnMovie?.addEventListener("click", () => {
     if (currentType === "movie") return;
     currentType = "movie";
-    currentId = "1236045";
-    if (idInput) idInput.value = currentId;
-    loadStream();
+    updateTypeUI();
+    if (currentId) {
+      loadStream(true);
+    } else {
+      renderIdleState();
+    }
   });
 
   typeBtnTv?.addEventListener("click", () => {
     if (currentType === "tv") return;
     currentType = "tv";
-    currentId = "123542";
     currentSeason = 1;
     currentEpisode = 1;
-    if (idInput) idInput.value = currentId;
     if (seasonInput) seasonInput.value = "1";
     if (episodeInput) episodeInput.value = "1";
-    loadStream();
+    updateTypeUI();
+    if (currentId) {
+      loadStream(true);
+    } else {
+      renderIdleState();
+    }
   });
 
   fetchBtn?.addEventListener("click", () => {
-    if (idInput && idInput.value.trim()) {
-      currentId = idInput.value.trim();
+    const val = idInput ? idInput.value.trim() : "";
+    if (!val) {
+      idInput?.focus();
+      return;
     }
+    currentId = val;
     if (seasonInput) currentSeason = parseInt(seasonInput.value, 10) || 1;
     if (episodeInput) currentEpisode = parseInt(episodeInput.value, 10) || 1;
-    loadStream();
+    loadStream(true);
   });
 
   idInput?.addEventListener("keydown", (e) => {
@@ -407,8 +462,7 @@ function initStudio(): void {
   const tabButtons = [
     { btn: tabIframe, tab: "iframe" as const },
     { btn: tabLink, tab: "link" as const },
-    { btn: tabSdk, tab: "sdk" as const },
-    { btn: tabApi, tab: "api" as const }
+    { btn: tabSdk, tab: "sdk" as const }
   ];
 
   tabButtons.forEach(({ btn, tab }) => {
@@ -516,5 +570,9 @@ function initStudio(): void {
     );
   });
 
-  loadStream(false);
+  if (currentId) {
+    loadStream(false);
+  } else {
+    renderIdleState();
+  }
 }

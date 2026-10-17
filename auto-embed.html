@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <title>VidEmbed Auto Stream Player</title>
+  <link rel="icon" type="image/png" href="/assets/img/fav.png" />
+  <link rel="apple-touch-icon" href="/assets/img/fav.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/auto/autoPlayer.css">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      background: #000000;
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+    #auto-player-root {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      background: #000000;
+    }
+  </style>
+</head>
+<body>
+  <div id="auto-player-root"></div>
+  <script type="module" src="/src/auto/autoEmbed.ts"></script>
+</body>
+</html>

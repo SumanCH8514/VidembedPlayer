@@ -19,10 +19,20 @@ function cleanUrlsPlugin(): Plugin {
           return;
         }
       }
+      if (pathname === "/auto.html" && search && (new URLSearchParams(search).get("embed") === "1" || new URLSearchParams(search).get("plain") === "1")) {
+        req.url = `/auto-embed.html?${search}`;
+      }
       if (!pathname.includes(".") && pathname !== "/") {
         const clean = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
-        if (clean === "/auto" || clean.startsWith("/auto/")) {
-          req.url = search ? `/auto.html?${search}` : `/auto.html`;
+        if (clean === "/auto/embed") {
+          req.url = search ? `/auto-embed.html?${search}` : `/auto-embed.html`;
+        } else if (clean === "/auto" || clean.startsWith("/auto/")) {
+          const sp = new URLSearchParams(search || "");
+          if (sp.get("embed") === "1" || sp.get("plain") === "1") {
+            req.url = search ? `/auto-embed.html?${search}` : `/auto-embed.html`;
+          } else {
+            req.url = search ? `/auto.html?${search}` : `/auto.html`;
+          }
         } else {
           const targetFile = resolve(rootDir, `.${clean}.html`);
           if (fs.existsSync(targetFile)) {
@@ -55,6 +65,7 @@ export default defineConfig({
         main: resolve(rootDir, "index.html"),
         embed: resolve(rootDir, "embed.html"),
         auto: resolve(rootDir, "auto.html"),
+        autoEmbed: resolve(rootDir, "auto-embed.html"),
         docs: resolve(rootDir, "docs.html"),
         test: resolve(rootDir, "test-embed.html")
       }
