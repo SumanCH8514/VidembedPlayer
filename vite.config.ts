@@ -29,6 +29,8 @@ function cleanUrlsPlugin(): Plugin {
         const clean = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
         if (clean === "/auto/embed") {
           req.url = search ? `/auto-embed.html?${search}` : `/auto-embed.html`;
+        } else if (clean === "/auto/docs" || clean === "/docs/auto") {
+          req.url = search ? `/auto-docs.html?${search}` : `/auto-docs.html`;
         } else if (clean === "/auto" || clean.startsWith("/auto/")) {
           const sp = new URLSearchParams(search || "");
           if (sp.get("embed") === "1" || sp.get("plain") === "1") {
@@ -76,6 +78,7 @@ export default defineConfig({
         embed: resolve(rootDir, "embed.html"),
         auto: resolve(rootDir, "auto.html"),
         autoEmbed: resolve(rootDir, "auto-embed.html"),
+        autoDocs: resolve(rootDir, "auto-docs.html"),
         docs: resolve(rootDir, "docs.html"),
         test: resolve(rootDir, "test-embed.html")
       }

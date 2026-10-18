@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <title>Auto Embed Player — Developer API & Integration Documentation</title>
+  <meta name="description" content="Production-grade developer documentation for VidEmbed Auto Stream Player. Learn how to implement responsive iframes, direct stream links, custom branding, and REST APIs." />
+  <link rel="icon" type="image/png" href="/assets/img/fav.png" />
+  <link rel="apple-touch-icon" href="/assets/img/fav.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <link rel="stylesheet" href="/src/auto/autoDocs.css">
+</head>
+<body>
+  <div class="docs-page-wrap">
+    <header class="docs-navbar">
+      <div class="docs-navbar-inner">
+        <a href="/auto" class="docs-brand-wrap" title="Auto Stream Studio">
+          <div class="docs-brand-icon">
+            <svg viewBox="0 0 24 24">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </div>
+          <div class="docs-brand-text">
+            <div class="docs-brand-title">Auto<span>Embed</span> Docs</div>
+            <div class="docs-brand-badge">Developer Portal</div>
+          </div>
+        </a>
+
+        <div class="docs-nav-links">
+          <a href="/auto" class="docs-nav-link primary" title="Open Studio Configurator">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Live Studio</span>
+          </a>
+          <a href="/docs" class="docs-nav-link" title="Universal VidEmbed Docs">
+            <span>Universal Docs</span>
+          </a>
+          <a href="/test-embed" class="docs-nav-link" title="Demo Sandbox">
+            <span>Demo Sandbox</span>
+          </a>
+          <button id="docs-mobile-toggle" class="docs-mobile-toggle" aria-label="Toggle navigation menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="docs-sidebar-backdrop" class="docs-sidebar-backdrop"></div>
+
+    <div class="docs-layout">
+      <aside id="docs-sidebar" class="docs-sidebar">
+        <div class="docs-sidebar-mobile-header">
+          <div class="docs-sidebar-mobile-brand">
+            <div class="docs-brand-icon" style="width:26px;height:26px;border-radius:6px;">
+              <svg viewBox="0 0 24 24" style="width:13px;height:13px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            </div>
+            <span>AutoEmbed Docs</span>
+          </div>
+          <button id="docs-sidebar-close" class="docs-sidebar-close" aria-label="Close menu">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="docs-sidebar-group">
+          <div class="docs-sidebar-title">Getting Started</div>
+          <ul class="docs-sidebar-nav">
+            <li><a href="#overview" class="docs-sidebar-link active">Overview</a></li>
+            <li><a href="#architecture" class="docs-sidebar-link">Architecture &amp; Failover</a></li>
+            <li><a href="#quick-embed" class="docs-sidebar-link">Quick 1-Line Embed</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-group">
+          <div class="docs-sidebar-title">Interactive Tool</div>
+          <ul class="docs-sidebar-nav">
+            <li><a href="#generator" class="docs-sidebar-link">Live Code Generator <span class="docs-sidebar-tag">Tool</span></a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-group">
+          <div class="docs-sidebar-title">Endpoints &amp; Parameters</div>
+          <ul class="docs-sidebar-nav">
+            <li><a href="#url-structure" class="docs-sidebar-link">URL Formats &amp; Endpoints</a></li>
+            <li><a href="#query-params" class="docs-sidebar-link">Query Parameters Reference</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-group">
+          <div class="docs-sidebar-title">Integration Guides</div>
+          <ul class="docs-sidebar-nav">
+            <li><a href="#guide-html" class="docs-sidebar-link">HTML5 Responsive Iframe</a></li>
+            <li><a href="#guide-react" class="docs-sidebar-link">React &amp; Next.js (TypeScript)</a></li>
+            <li><a href="#guide-vue" class="docs-sidebar-link">Vue 3 Component</a></li>
+            <li><a href="#guide-wordpress" class="docs-sidebar-link">WordPress &amp; CMS Embeds</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-group">
+          <div class="docs-sidebar-title">REST APIs</div>
+          <ul class="docs-sidebar-nav">
+            <li><a href="#api-sources" class="docs-sidebar-link">Stream Sources API</a></li>
+            <li><a href="#api-health" class="docs-sidebar-link">Edge Health &amp; Ping API</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-group">
+          <div class="docs-sidebar-title">Player Engine</div>
+          <ul class="docs-sidebar-nav">
+            <li><a href="#player-features" class="docs-sidebar-link">Features &amp; Gestures</a></li>
+            <li><a href="#branding-customization" class="docs-sidebar-link">Custom Watermark &amp; Themes</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-group">
+          <div class="docs-sidebar-title">Support</div>
+          <ul class="docs-sidebar-nav">
+            <li><a href="#best-practices" class="docs-sidebar-link">Best Practices &amp; CSP</a></li>
+            <li><a href="#faq" class="docs-sidebar-link">FAQ &amp; Troubleshooting</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-group docs-sidebar-mobile-only">
+          <div class="docs-sidebar-title">Portals &amp; Tools</div>
+          <ul class="docs-sidebar-nav">
+            <li><a href="/auto" class="docs-sidebar-link">Auto Stream Studio</a></li>
+            <li><a href="/docs" class="docs-sidebar-link">Universal Docs</a></li>
+            <li><a href="/test-embed" class="docs-sidebar-link">Demo Sandbox</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <div id="docs-main-scroll" class="docs-main-scroll">
+        <main class="docs-content">
+        <div class="docs-hero">
+          <div class="docs-hero-badge-row">
+            <span class="docs-badge green">v2.5 Production Ready</span>
+            <span class="docs-badge">Direct HLS 1080p/720p</span>
+            <span class="docs-badge purple">Zero External Ads</span>
+          </div>
+          <h1 class="docs-hero-title">VidEmbed Auto Stream <span>Developer Documentation</span></h1>
+          <p class="docs-hero-desc">
+            Learn how to integrate the high-performance VidEmbed Auto Player on your web application. Features automated multi-CDN edge failover, custom dual-tone watermarking, adaptive HLS quality streaming, multi-audio selection, and native mobile gestures.
+          </p>
+        </div>
+
+        <section id="overview" class="docs-section">
+          <h2 class="docs-section-heading">Overview</h2>
+          <p class="docs-section-sub">
+            VidEmbed Auto Stream delivers an automated streaming interface capable of resolving movies and television series using either TMDB (The Movie Database) or IMDb identifiers.
+          </p>
+
+          <div class="docs-callout">
+            <div class="docs-callout-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div class="docs-callout-content">
+              <strong>Zero Hardcoded Credentials:</strong> All media resolution, manifest parsing, and failover health checks are handled on the edge without exposing secret API keys or third-party provider tokens on the client browser.
+            </div>
+          </div>
+        </section>
+
+        <section id="architecture" class="docs-section">
+          <h2 class="docs-section-heading">Architecture &amp; Failover Pipeline</h2>
+          <p class="docs-section-sub">
+            The player utilizes a two-tier streaming pipeline ensuring maximum availability:
+          </p>
+          <div class="docs-table-wrapper">
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Tier</th>
+                  <th>Delivery Mechanism</th>
+                  <th>Capabilities</th>
+                  <th>Behavior</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Tier 1: Castle Direct HLS</strong></td>
+                  <td>Direct M3U8 Stream Manifests</td>
+                  <td>1080p, 720p, 480p, 360p adaptive bitrate, multi-channel audio tracks, WebVTT subtitles</td>
+                  <td>Instant playback via native HTML5 video and Hls.js with zero popup advertisements.</td>
+                </tr>
+                <tr>
+                  <td><strong>Tier 2: Edge CDN Failover</strong></td>
+                  <td>Multi-Node Fallback</td>
+                  <td>12 Distributed global streaming nodes (VidSrc, 2Embed, Toulouse, Castle, etc.)</td>
+                  <td>Automatic real-time latency pinging and silent edge redirection if any source suffers degradation.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="quick-embed" class="docs-section">
+          <h2 class="docs-section-heading">Quick 1-Line Embed</h2>
+          <p class="docs-section-sub">
+            Embed any movie or TV series immediately using an HTML <code>&lt;iframe&gt;</code> element:
+          </p>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>HTML Movie Embed</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Code</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>&lt;iframe
+  src="https://yourdomain.com/auto?type=movie&amp;id=1236045&amp;embed=1"
+  width="100%"
+  height="100%"
+  style="aspect-ratio: 16/9; border: none; border-radius: 12px;"
+  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+  allowfullscreen&gt;
+&lt;/iframe&gt;</code></pre>
+          </div>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>HTML TV Show Episode Embed</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Code</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>&lt;iframe
+  src="https://yourdomain.com/auto?type=tv&amp;id=94997&amp;s=1&amp;e=2&amp;embed=1"
+  width="100%"
+  height="100%"
+  style="aspect-ratio: 16/9; border: none; border-radius: 12px;"
+  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+  allowfullscreen&gt;
+&lt;/iframe&gt;</code></pre>
+          </div>
+        </section>
+
+        <section id="generator" class="docs-section">
+          <h2 class="docs-section-heading">Interactive Live Code Generator</h2>
+          <p class="docs-section-sub">
+            Customize parameters in real time and copy ready-to-use embed snippets for HTML, direct link, or React.
+          </p>
+
+          <div class="docs-generator-card">
+            <div class="docs-generator-grid">
+              <div class="docs-gen-field">
+                <label class="docs-gen-label">Media Type</label>
+                <select id="gen-type" class="docs-gen-select">
+                  <option value="movie" selected>Movie</option>
+                  <option value="tv">TV Series</option>
+                </select>
+              </div>
+
+              <div class="docs-gen-field">
+                <label class="docs-gen-label">TMDB or IMDb ID</label>
+                <input type="text" id="gen-id" class="docs-gen-input" value="1236045" placeholder="e.g. 1236045 or tt1375666" />
+              </div>
+
+              <div id="gen-tv-wrap" class="docs-gen-field" style="display: none; flex-direction: row; gap: 8px;">
+                <div style="flex: 1;">
+                  <label class="docs-gen-label">Season</label>
+                  <input type="number" id="gen-season" class="docs-gen-input" value="1" min="1" max="99" />
+                </div>
+                <div style="flex: 1;">
+                  <label class="docs-gen-label">Episode</label>
+                  <input type="number" id="gen-episode" class="docs-gen-input" value="1" min="1" max="999" />
+                </div>
+              </div>
+
+              <div class="docs-gen-field">
+                <label class="docs-gen-label">Watermark Brand</label>
+                <input type="text" id="gen-brand" class="docs-gen-input" value="SumanMovies" placeholder="e.g. CineStream" />
+              </div>
+
+              <div class="docs-gen-field">
+                <label class="docs-gen-label">Theme Accent Color</label>
+                <input type="text" id="gen-color" class="docs-gen-input" value="0ea5e9" placeholder="Hex without #, e.g. 0ea5e9" />
+              </div>
+
+              <div class="docs-gen-field">
+                <label class="docs-gen-label">Aspect Fit Mode</label>
+                <select id="gen-fit" class="docs-gen-select">
+                  <option value="contain" selected>Fit (contain) [Default]</option>
+                  <option value="cover">Fill Screen (cover)</option>
+                  <option value="fill">Stretch (fill)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="docs-gen-checkbox-row">
+              <label class="docs-gen-check-label">
+                <input type="checkbox" id="gen-autoplay" />
+                <span>Autoplay</span>
+              </label>
+              <label class="docs-gen-check-label">
+                <input type="checkbox" id="gen-muted" />
+                <span>Start Muted</span>
+              </label>
+            </div>
+
+            <div class="docs-gen-actions">
+              <button id="gen-preview-btn" class="docs-gen-preview-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                <span>Open Live Test Embed</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>Generated HTML Iframe</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code id="gen-output-iframe"></code></pre>
+          </div>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>Direct Streaming URL</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code id="gen-output-url"></code></pre>
+          </div>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>React / Next.js Component</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code id="gen-output-react"></code></pre>
+          </div>
+        </section>
+
+        <section id="url-structure" class="docs-section">
+          <h2 class="docs-section-heading">URL Formats &amp; Endpoints</h2>
+          <p class="docs-section-sub">
+            The platform supports both standardized query parameter routing and clean path routing.
+          </p>
+
+          <div class="docs-table-wrapper">
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Pattern</th>
+                  <th>Endpoint Example</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Movie Embed</strong></td>
+                  <td><code>/auto?type=movie&amp;id=1236045&amp;embed=1</code></td>
+                  <td>Direct full-viewport embed player for the specified movie.</td>
+                </tr>
+                <tr>
+                  <td><strong>TV Episode Embed</strong></td>
+                  <td><code>/auto?type=tv&amp;id=94997&amp;s=1&amp;e=2&amp;embed=1</code></td>
+                  <td>Direct full-viewport embed player for Season 1, Episode 2.</td>
+                </tr>
+                <tr>
+                  <td><strong>Clean Embed Path</strong></td>
+                  <td><code>/auto/embed?type=movie&amp;id=1236045</code></td>
+                  <td>Automatically resolves into embed mode without requiring <code>embed=1</code>.</td>
+                </tr>
+                <tr>
+                  <td><strong>IMDb ID Query</strong></td>
+                  <td><code>/auto?type=movie&amp;id=tt1375666&amp;embed=1</code></td>
+                  <td>Resolves IMDb ID into the corresponding title and streams automatically.</td>
+                </tr>
+                <tr>
+                  <td><strong>Studio Mode</strong></td>
+                  <td><code>/auto?type=movie&amp;id=1236045</code></td>
+                  <td>Loads the interactive studio page with metadata inspection and telemetry.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="query-params" class="docs-section">
+          <h2 class="docs-section-heading">Query Parameters Reference</h2>
+          <p class="docs-section-sub">
+            Customize video behavior, player styling, and failover parameters with URL query arguments.
+          </p>
+
+          <div class="docs-table-wrapper">
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Parameter</th>
+                  <th>Status</th>
+                  <th>Type</th>
+                  <th>Default</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>type</code></td>
+                  <td><span class="docs-tag-req">Required</span></td>
+                  <td><code>"movie" | "tv"</code></td>
+                  <td><code>"movie"</code></td>
+                  <td>Specifies the media content format.</td>
+                </tr>
+                <tr>
+                  <td><code>id</code></td>
+                  <td><span class="docs-tag-req">Required</span></td>
+                  <td><code>string | number</code></td>
+                  <td><code>none</code></td>
+                  <td>TMDB integer ID (e.g. <code>1236045</code>) or IMDb alphanumeric string (e.g. <code>tt1375666</code>).</td>
+                </tr>
+                <tr>
+                  <td><code>s</code> / <code>season</code></td>
+                  <td><span class="docs-tag-opt">Optional</span></td>
+                  <td><code>number</code></td>
+                  <td><code>1</code></td>
+                  <td>Season index number for TV series.</td>
+                </tr>
+                <tr>
+                  <td><code>e</code> / <code>episode</code></td>
+                  <td><span class="docs-tag-opt">Optional</span></td>
+                  <td><code>number</code></td>
+                  <td><code>1</code></td>
+                  <td>Episode index number for TV series.</td>
+                </tr>
+                <tr>
+                  <td><code>brand</code></td>
+                  <td><span class="docs-tag-opt">Optional</span></td>
+                  <td><code>string</code></td>
+                  <td><code>"SumanMovies"</code></td>
+                  <td>Watermark pill brand label. Automatically formatted into a sleek dual-tone pill.</td>
+                </tr>
+                <tr>
+                  <td><code>color</code></td>
+                  <td><span class="docs-tag-opt">Optional</span></td>
+                  <td><code>string</code></td>
+                  <td><code>"0ea5e9"</code></td>
+                  <td>Player UI theme accent color hex code without <code>#</code> (e.g. <code>38bdf8</code>, <code>ef4444</code>).</td>
+                </tr>
+                <tr>
+                  <td><code>fit</code></td>
+                  <td><span class="docs-tag-opt">Optional</span></td>
+                  <td><code>"contain" | "cover" | "fill"</code></td>
+                  <td><code>"contain"</code></td>
+                  <td>Video aspect ratio fitting mode. <code>contain</code> letterboxes; <code>cover</code> zooms; <code>fill</code> stretches.</td>
+                </tr>
+                <tr>
+                  <td><code>autoplay</code></td>
+                  <td><span class="docs-tag-opt">Optional</span></td>
+                  <td><code>1 | 0</code></td>
+                  <td><code>0</code></td>
+                  <td>Initiates automatic video playback upon load (often requires <code>muted=1</code> on mobile browsers).</td>
+                </tr>
+                <tr>
+                  <td><code>muted</code></td>
+                  <td><span class="docs-tag-opt">Optional</span></td>
+                  <td><code>1 | 0</code></td>
+                  <td><code>0</code></td>
+                  <td>Mutes audio volume on initial player load.</td>
+                </tr>
+                <tr>
+                  <td><code>embed</code></td>
+                  <td><span class="docs-tag-opt">Optional</span></td>
+                  <td><code>1 | 0</code></td>
+                  <td><code>0</code></td>
+                  <td>Activates standalone embed player mode, hiding all studio and customizer chrome.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="guide-html" class="docs-section">
+          <h2 class="docs-section-heading">HTML5 Responsive Container</h2>
+          <p class="docs-section-sub">
+            The recommended way to embed VidEmbed Auto Player in pure HTML is using a 16:9 aspect-ratio container with CSS:
+          </p>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>Responsive HTML5 &amp; CSS Implementation</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Code</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>&lt;!-- HTML Container --&gt;
+&lt;div class="player-wrapper"&gt;
+  &lt;iframe
+    src="https://yourdomain.com/auto?type=movie&amp;id=1236045&amp;brand=MySite&amp;color=38bdf8&amp;embed=1"
+    title="VidEmbed Stream Player"
+    loading="lazy"
+    allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+    allowfullscreen&gt;
+  &lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;!-- CSS --&gt;
+&lt;style&gt;
+.player-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000000;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+.player-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+&lt;/style&gt;</code></pre>
+          </div>
+        </section>
+
+        <section id="guide-react" class="docs-section">
+          <h2 class="docs-section-heading">React &amp; Next.js (TypeScript)</h2>
+          <p class="docs-section-sub">
+            A production-ready React component with TypeScript props validation:
+          </p>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>AutoEmbedPlayer.tsx</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Code</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>import React from 'react';
+
+interface AutoEmbedPlayerProps {
+  type: 'movie' | 'tv';
+  id: string | number;
+  season?: number;
+  episode?: number;
+  brand?: string;
+  color?: string;
+  autoplay?: boolean;
+  muted?: boolean;
+  fit?: 'contain' | 'cover' | 'fill';
+  className?: string;
+}
+
+export const AutoEmbedPlayer: React.FC&lt;AutoEmbedPlayerProps&gt; = ({
+  type,
+  id,
+  season = 1,
+  episode = 1,
+  brand = 'SumanMovies',
+  color = '0ea5e9',
+  autoplay = false,
+  muted = false,
+  fit = 'contain',
+  className = ''
+}) => {
+  const params = new URLSearchParams({
+    type,
+    id: String(id),
+    brand,
+    color: color.replace('#', ''),
+    fit,
+    embed: '1'
+  });
+
+  if (type === 'tv') {
+    params.set('s', String(season));
+    params.set('e', String(episode));
+  }
+  if (autoplay) params.set('autoplay', '1');
+  if (muted) params.set('muted', '1');
+
+  const embedUrl = `https://yourdomain.com/auto?${params.toString()}`;
+
+  return (
+    &lt;div
+      className={className}
+      style={{
+        position: 'relative',
+        width: '100%',
+        aspectRatio: '16 / 9',
+        backgroundColor: '#000',
+        borderRadius: '12px',
+        overflow: 'hidden'
+      }}
+    &gt;
+      &lt;iframe
+        src={embedUrl}
+        title="VidEmbed Auto Stream Player"
+        loading="lazy"
+        allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+        allowFullScreen
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          border: 'none'
+        }}
+      /&gt;
+    &lt;/div&gt;
+  );
+};</code></pre>
+          </div>
+        </section>
+
+        <section id="guide-vue" class="docs-section">
+          <h2 class="docs-section-heading">Vue 3 Component</h2>
+          <p class="docs-section-sub">
+            Single-file component implementation using Vue 3 Composition API:
+          </p>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>AutoPlayer.vue</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Code</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>&lt;script setup lang="ts"&gt;
+import { computed } from 'vue';
+
+const props = withDefaults(defineProps&lt;{
+  type?: 'movie' | 'tv';
+  id: string | number;
+  season?: number;
+  episode?: number;
+  brand?: string;
+  color?: string;
+  autoplay?: boolean;
+}&gt;(), {
+  type: 'movie',
+  season: 1,
+  episode: 1,
+  brand: 'SumanMovies',
+  color: '0ea5e9',
+  autoplay: false
+});
+
+const embedUrl = computed(() => {
+  const q = new URLSearchParams({
+    type: props.type,
+    id: String(props.id),
+    brand: props.brand,
+    color: props.color.replace('#', ''),
+    embed: '1'
+  });
+  if (props.type === 'tv') {
+    q.set('s', String(props.season));
+    q.set('e', String(props.episode));
+  }
+  if (props.autoplay) q.set('autoplay', '1');
+  return `https://yourdomain.com/auto?${q.toString()}`;
+});
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div class="auto-player-frame"&gt;
+    &lt;iframe
+      :src="embedUrl"
+      allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+      allowfullscreen
+    /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.auto-player-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.auto-player-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+&lt;/style&gt;</code></pre>
+          </div>
+        </section>
+
+        <section id="guide-wordpress" class="docs-section">
+          <h2 class="docs-section-heading">WordPress &amp; CMS Embeds</h2>
+          <p class="docs-section-sub">
+            Easily embed into WordPress using the Custom HTML Block, Elementor HTML Widget, or a PHP Shortcode.
+          </p>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>functions.php WordPress Shortcode</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy Code</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>function vidembed_auto_shortcode($atts) {
+    $a = shortcode_atts(array(
+        'type'    => 'movie',
+        'id'      => '1236045',
+        'season'  => '1',
+        'episode' => '1',
+        'brand'   => 'SumanMovies',
+        'color'   => '0ea5e9'
+    ), $atts);
+
+    $url = 'https://yourdomain.com/auto?type=' . esc_attr($a['type']) .
+           '&amp;id=' . esc_attr($a['id']) .
+           ($a['type'] === 'tv' ? '&amp;s=' . esc_attr($a['season']) . '&amp;e=' . esc_attr($a['episode']) : '') .
+           '&amp;brand=' . esc_attr($a['brand']) .
+           '&amp;color=' . esc_attr($a['color']) .
+           '&amp;embed=1';
+
+    return '&lt;div style="position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;"&gt;
+        &lt;iframe src="' . esc_url($url) . '" style="border:none;width:100%;height:100%;position:absolute;top:0;left:0;" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen&gt;&lt;/iframe&gt;
+    &lt;/div&gt;';
+}
+add_shortcode('vidembed_auto', 'vidembed_auto_shortcode');</code></pre>
+          </div>
+        </section>
+
+        <section id="api-sources" class="docs-section">
+          <h2 class="docs-section-heading">REST API: Stream Sources</h2>
+          <p class="docs-section-sub">
+            Backend developers can query the auto stream resolver directly to inspect available M3U8 Castle Direct streams, audio tracks, and CDN nodes.
+          </p>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>GET /api/stream/movie/{id}</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>curl -X GET "https://yourdomain.com/api/stream/movie/1236045" \
+     -H "Accept: application/json"</code></pre>
+          </div>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>Example JSON Response</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>{
+  "sources": [
+    {
+      "id": "server-direct-castle",
+      "name": "Castle (HLS)",
+      "label": "Castle (Direct HLS 1080p)",
+      "url": "https://stream.castlecdn.org/manifest.m3u8",
+      "type": "hls",
+      "audioStreams": [
+        { "id": "en", "label": "English (Original)", "language": "en" },
+        { "id": "hi", "label": "Hindi (Dubbed)", "language": "hi" }
+      ],
+      "subtitles": [
+        { "label": "English", "lang": "en", "url": "https://cdn.subs.org/en.vtt" }
+      ]
+    },
+    {
+      "id": "server-vidsrc",
+      "name": "Toulouse",
+      "label": "Toulouse (Fast Fallback)",
+      "url": "https://vidsrc.cc/v2/embed/movie/1236045",
+      "type": "iframe"
+    }
+  ],
+  "pending": false
+}</code></pre>
+          </div>
+        </section>
+
+        <section id="api-health" class="docs-section">
+          <h2 class="docs-section-heading">REST API: Edge Health &amp; Latency</h2>
+          <p class="docs-section-sub">
+            Monitor edge CDN server node reachability, latency ping, and active status:
+          </p>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>GET /api/stream/health/movie/{id}</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>curl -X GET "https://yourdomain.com/api/stream/health/movie/1236045" \
+     -H "Accept: application/json"</code></pre>
+          </div>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>Example Health Response</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>{
+  "results": [
+    { "id": "server-direct-castle", "reachable": true, "latencyMs": 42 },
+    { "id": "server-vidsrc", "reachable": true, "latencyMs": 88 },
+    { "id": "server-autoembed", "reachable": true, "latencyMs": 95 }
+  ]
+}</code></pre>
+          </div>
+        </section>
+
+        <section id="player-features" class="docs-section">
+          <h2 class="docs-section-heading">Player Features &amp; User Experience</h2>
+          <p class="docs-section-sub">
+            VidEmbed Auto Stream is built to deliver a native, premium media experience across both desktop and mobile web browsers.
+          </p>
+
+          <div class="docs-table-wrapper">
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Interaction</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Mobile Screen Tap-To-Wake</strong></td>
+                  <td>Single tap anywhere on screen</td>
+                  <td>Controls hidden after 3.5s inactivity immediately reveal on single screen tap.</td>
+                </tr>
+                <tr>
+                  <td><strong>Double-Tap Seek</strong></td>
+                  <td>Double tap left/right 50%</td>
+                  <td>Instantly skips backward (-10s) or forward (+10s) with glowing animated ripple feedback.</td>
+                </tr>
+                <tr>
+                  <td><strong>Slide-Up Settings Sheet</strong></td>
+                  <td>Settings gear icon</td>
+                  <td>Opens an app-style bottom sheet modal on mobile devices with subpage navigation and close buttons.</td>
+                </tr>
+                <tr>
+                  <td><strong>Multi-Language Audio</strong></td>
+                  <td>Options &gt; Audio Track</td>
+                  <td>Select alternate language dubs (English, Hindi, Spanish, etc.) without re-buffering.</td>
+                </tr>
+                <tr>
+                  <td><strong>WebVTT Subtitles</strong></td>
+                  <td>Options &gt; Subtitles</td>
+                  <td>Toggle caption tracks rendered with clean, readable subtitle styling.</td>
+                </tr>
+                <tr>
+                  <td><strong>Black Bar Crop</strong></td>
+                  <td>Options &gt; Crop black bars</td>
+                  <td>Scales anamorphic 2.39:1 widescreen films to fill 16:9 displays cleanly.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="branding-customization" class="docs-section">
+          <h2 class="docs-section-heading">Custom Watermark &amp; Themes</h2>
+          <p class="docs-section-sub">
+            Customize the branding pill rendered in the top-right corner of the video player:
+          </p>
+
+          <div class="docs-callout tip">
+            <div class="docs-callout-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div class="docs-callout-content">
+              <strong>Smart Word Splitting:</strong> If your brand name contains two words or camelCase (e.g. <code>CineStream</code>, <code>VidFlix</code>), the player automatically splits it into a dual-tone badge with vibrant accent styling.
+            </div>
+          </div>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>Custom Brand &amp; Accent URL</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>https://yourdomain.com/auto?type=movie&amp;id=1236045&amp;brand=ApexCinema&amp;color=f59e0b&amp;embed=1</code></pre>
+          </div>
+        </section>
+
+        <section id="best-practices" class="docs-section">
+          <h2 class="docs-section-heading">Best Practices &amp; Security</h2>
+          <p class="docs-section-sub">
+            Recommended policies for embedding iframes securely into your website:
+          </p>
+
+          <div class="docs-callout warning">
+            <div class="docs-callout-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </div>
+            <div class="docs-callout-content">
+              <strong>Browser Autoplay Requirements:</strong> Modern browsers (Google Chrome, Apple Safari, Mozilla Firefox) require videos with <code>autoplay=1</code> to also have <code>muted=1</code>, otherwise the browser will block automated playback until user interaction occurs.
+            </div>
+          </div>
+
+          <p class="docs-section-sub">
+            If your website employs Content Security Policy (CSP) headers, ensure your <code>frame-src</code> directive permits your streaming domain:
+          </p>
+
+          <div class="docs-code-container">
+            <div class="docs-code-header">
+              <div class="docs-code-title">
+                <span class="docs-code-dot"></span>
+                <span>Content-Security-Policy Header</span>
+              </div>
+              <button class="docs-code-copy-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
+            <pre class="docs-code-pre"><code>Content-Security-Policy: frame-src 'self' https://yourdomain.com;</code></pre>
+          </div>
+        </section>
+
+        <section id="faq" class="docs-section">
+          <h2 class="docs-section-heading">FAQ &amp; Troubleshooting</h2>
+          <div class="docs-faq-card">
+            <div class="docs-faq-q">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <span>Can I pass IMDb IDs instead of TMDB IDs?</span>
+            </div>
+            <div class="docs-faq-a">
+              Yes. You can pass any IMDb title identifier (e.g. <code>id=tt1375666</code>). The system automatically queries the edge resolver and Cinemeta index to locate the correct stream and artwork without any code changes.
+            </div>
+          </div>
+
+          <div class="docs-faq-card">
+            <div class="docs-faq-q">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <span>What happens if the primary Castle server goes offline?</span>
+            </div>
+            <div class="docs-faq-a">
+              The player's automated failover engine instantly switches to the next reachable high-speed edge CDN node (VidSrc, Toulouse, etc.) within milliseconds without interrupting the user session.
+            </div>
+          </div>
+
+          <div class="docs-faq-card">
+            <div class="docs-faq-q">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <span>Are there advertisements or popups on Castle Direct HLS?</span>
+            </div>
+            <div class="docs-faq-a">
+              No. Castle Direct HLS feeds stream directly over native HTTP Live Streaming without any third-party ad networks, popunders, or redirection scripts.
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="docs-footer">
+        <div class="docs-footer-inner">
+          <div class="docs-footer-left">
+            Built, designed, and maintained by <strong>SumanOnline Web Services</strong> (<a href="https://sumanonline.com" target="_blank" rel="noopener">SumanOnline.Com</a>). All rights reserved.
+          </div>
+          <div class="docs-footer-links">
+            <a href="/auto">Auto Studio</a>
+            <a href="/docs">Universal Docs</a>
+            <a href="/test-embed">Demo Sandbox</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+</div>
+
+  <script type="module" src="/src/auto/autoDocs.ts"></script>
+</body>
+</html>

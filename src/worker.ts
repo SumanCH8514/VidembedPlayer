@@ -62,8 +62,12 @@ export default {
     if (!pathname.includes(".") && pathname !== "/") {
       const clean = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
       let targetHtml = `${clean}.html`;
-      if (clean === "/auto" && (url.searchParams.get("embed") === "1" || url.searchParams.get("plain") === "1")) {
-        targetHtml = "auto-embed.html";
+      if (clean === "/auto/docs" || clean === "/docs/auto") {
+        targetHtml = "/auto-docs.html";
+      } else if (clean === "/auto/embed" || (clean === "/auto" && (url.searchParams.get("embed") === "1" || url.searchParams.get("plain") === "1"))) {
+        targetHtml = "/auto-embed.html";
+      } else if (clean === "/auto" || clean.startsWith("/auto/")) {
+        targetHtml = "/auto.html";
       }
       const htmlUrl = new URL(`${targetHtml}${search}`, request.url);
       assetResponse = await env.ASSETS.fetch(new Request(htmlUrl.toString(), request));

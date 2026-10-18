@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title>VidEmbed Studio — Universal Video Player & Embed Platform</title>
-  <meta name="description" content="Production-grade universal video player powered by WebCodecs & FFmpeg WASM. Play MKV, MP4, AVI, WebM, HLS and generate instant embed links." />
+  <meta name="description"
+    content="Production-grade universal video player powered by WebCodecs & FFmpeg WASM. Play MKV, MP4, AVI, WebM, HLS and generate instant embed links." />
   <link rel="icon" type="image/png" href="/assets/img/fav.png" />
   <link rel="apple-touch-icon" href="/assets/img/fav.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css">
 </head>
+
 <body>
   <nav class="site-nav">
     <div class="nav-container">
       <a href="/" class="brand-wrapper">
         <div class="brand-logo">
           <svg viewBox="0 0 24 24">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
           </svg>
         </div>
         <div class="brand-text-col">
@@ -27,7 +32,7 @@
         </div>
       </a>
       <div class="nav-links">
-        <a href="/docs" class="nav-btn">
+        <a href="/docs" class="nav-btn" title="API Documentation" aria-label="Documentation">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
@@ -35,14 +40,14 @@
           <span class="nav-text-desktop">API Docs</span>
           <span class="nav-text-mobile">Docs</span>
         </a>
-        <a href="/test-embed" class="nav-btn nav-btn-hide-mobile">
+        <a href="/test-embed" class="nav-btn nav-btn-hide-mobile" title="Interactive Demo" aria-label="Demo">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="16 18 22 12 16 6"></polyline>
             <polyline points="8 6 2 12 8 18"></polyline>
           </svg>
           <span>Demo</span>
         </a>
-        <a href="/auto?type=movie&id=1236045&title=Animals&brand=SumanMovies" target="_blank" rel="noopener" class="nav-btn">
+        <a href="/auto" target="_blank" rel="noopener" class="nav-btn" title="TMDB &amp; IMDb Auto Stream" aria-label="Auto Stream">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="2" y="3" width="20" height="7" rx="2"></rect>
             <rect x="2" y="14" width="20" height="7" rx="2"></rect>
@@ -50,7 +55,8 @@
           <span class="nav-text-desktop">Auto Stream</span>
           <span class="nav-text-mobile">Auto</span>
         </a>
-        <a href="/embed?url=https://lorem.video/720p.mp4&title=720p+Test+Video" target="_blank" rel="noopener" class="nav-btn primary">
+        <a href="/embed?url=https://lorem.video/720p.mp4&title=720p+Test+Video" target="_blank" rel="noopener"
+          class="nav-btn primary" title="Launch Standalone Embed Player" aria-label="Launch Embed">
           <span class="nav-text-desktop">Launch Embed</span>
           <span class="nav-text-mobile">Embed</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -66,7 +72,8 @@
   <main class="app-wrapper">
     <header class="hero-banner">
       <h1 class="hero-heading">Play Any Video Format. <span>Embed Anywhere.</span></h1>
-      <p class="hero-subheading">Hardware-accelerated playback for MKV, MP4, AVI, WebM, and HLS without server transcoding. Generate production-ready iframe embeds, URL parameter links, and JavaScript SDK controls.</p>
+      <p class="hero-subheading">Hardware-accelerated playback for MKV, MP4, AVI, WebM, and HLS without server
+        transcoding. Generate production-ready iframe embeds, URL parameter links, and JavaScript SDK controls.</p>
       <div class="format-tags-row">
         <span class="format-chip active">MKV (Matroska)</span>
         <span class="format-chip active">MP4 (H.264 / HEVC)</span>
@@ -86,13 +93,8 @@
               <circle cx="12" cy="12" r="10"></circle>
               <polygon points="10 8 16 12 10 16 10 8"></polygon>
             </svg>
-            <input
-              type="url"
-              id="source-url-input"
-              class="stream-url-field"
-              placeholder="Paste any stream URL (MKV, MP4, AVI, WebM, HLS m3u8, TS)..."
-              value=""
-            />
+            <input type="url" id="source-url-input" class="stream-url-field"
+              placeholder="Paste any stream URL (MKV, MP4, AVI, WebM, HLS m3u8, TS)..." value="" />
           </div>
           <button id="load-url-btn" class="btn-action btn-load">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -116,27 +118,33 @@
         <div class="presets-container">
           <span class="presets-title">Sample Presets:</span>
           <div class="presets-scroll-track">
-            <button class="preset-chip-btn" data-url="https://lorem.video/720p.mp4" data-title="Bunny 720p Standard" data-poster="https://lorem.video/web/img/bunny-thumb.webp">
+            <button class="preset-chip-btn" data-url="https://lorem.video/720p.mp4" data-title="Bunny 720p Standard"
+              data-poster="https://lorem.video/web/img/bunny-thumb.webp">
               <span class="preset-badge-tag">720P</span>
               <span>Bunny Sample</span>
             </button>
-            <button class="preset-chip-btn" data-url="https://lorem.video/cat.mp4" data-title="Cat Playing 1080p" data-poster="https://lorem.video/web/img/cat-thumb.webp">
+            <button class="preset-chip-btn" data-url="https://lorem.video/cat.mp4" data-title="Cat Playing 1080p"
+              data-poster="https://lorem.video/web/img/cat-thumb.webp">
               <span class="preset-badge-tag">1080P</span>
               <span>Cat Playing</span>
             </button>
-            <button class="preset-chip-btn" data-url="https://lorem.video/corgi.mp4" data-title="Corgi Phoebe" data-poster="https://lorem.video/web/img/corgi-thumb.webp">
+            <button class="preset-chip-btn" data-url="https://lorem.video/corgi.mp4" data-title="Corgi Phoebe"
+              data-poster="https://lorem.video/web/img/corgi-thumb.webp">
               <span class="preset-badge-tag">HD</span>
               <span>Corgi Phoebe</span>
             </button>
-            <button class="preset-chip-btn" data-url="https://lorem.video/test.mp4" data-title="FFmpeg Color Bars Test" data-poster="https://lorem.video/web/img/test-thumb.webp">
+            <button class="preset-chip-btn" data-url="https://lorem.video/test.mp4" data-title="FFmpeg Color Bars Test"
+              data-poster="https://lorem.video/web/img/test-thumb.webp">
               <span class="preset-badge-tag">SMPTE</span>
               <span>Color Bars</span>
             </button>
-            <button class="preset-chip-btn" data-url="https://lorem.video/720p_av1.mp4" data-title="Next-Gen AV1 Stream">
+            <button class="preset-chip-btn" data-url="https://lorem.video/720p_av1.mp4"
+              data-title="Next-Gen AV1 Stream">
               <span class="preset-badge-tag">AV1</span>
               <span>AV1 Codec</span>
             </button>
-            <button class="preset-chip-btn" data-url="https://lorem.video/test_1080p_vp9.webm" data-title="WebM VP9 High Definition">
+            <button class="preset-chip-btn" data-url="https://lorem.video/test_1080p_vp9.webm"
+              data-title="WebM VP9 High Definition">
               <span class="preset-badge-tag">WebM</span>
               <span>VP9 Matrix</span>
             </button>
@@ -146,21 +154,9 @@
 
       <div class="player-cinema-stage">
         <div id="ambient-glow-layer"></div>
-        <movi-player
-          id="main-stage-player"
-          renderer="canvas"
-          controls
-          playsinline
-          fastseek
-          objectfit="contain"
-          posterfit="contain"
-          showtitle
-          ambientmode
-          ambientwrapper="ambient-glow-layer"
-          poster="/assets/img/image.png"
-          wasmurl="/movi.wasm"
-          style="width: 100%; height: 100%;"
-        ></movi-player>
+        <movi-player id="main-stage-player" renderer="canvas" controls playsinline fastseek objectfit="contain"
+          posterfit="contain" showtitle ambientmode ambientwrapper="ambient-glow-layer" poster="/assets/img/image.png"
+          wasmurl="/movi.wasm" style="width: 100%; height: 100%;"></movi-player>
         <div id="native-stage-container" style="display: none; width: 100%; height: 100%;"></div>
         <div class="player-standby-overlay" id="stage-standby-overlay">
           <div class="standby-card">
@@ -170,7 +166,8 @@
               </svg>
             </div>
             <div class="standby-title">Ready to Stream</div>
-            <div class="standby-hint">Paste a video stream URL above or click any sample preset below to start playback</div>
+            <div class="standby-hint">Paste a video stream URL above or click any sample preset below to start playback
+            </div>
           </div>
         </div>
       </div>
@@ -202,7 +199,9 @@
             <h2 class="card-title">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3"></circle>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                <path
+                  d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                </path>
               </svg>
               <span>Embed Customizer</span>
             </h2>
@@ -277,7 +276,8 @@
 
             <div class="field-group">
               <label for="cfg-title" class="field-label">Display Title</label>
-              <input type="text" id="cfg-title" class="field-input" placeholder="Title shown in player header..." value="" />
+              <input type="text" id="cfg-title" class="field-input" placeholder="Title shown in player header..."
+                value="" />
             </div>
 
             <div class="field-group">
@@ -323,7 +323,9 @@
 
           <div class="code-viewer-shell">
             <div class="code-tabs-nav">
-              <span style="font-size: 11px; font-weight: 700; color: var(--text-subtle); letter-spacing: 0.05em; text-transform: uppercase;" id="active-tab-label">Responsive Iframe Snippet</span>
+              <span
+                style="font-size: 11px; font-weight: 700; color: var(--text-subtle); letter-spacing: 0.05em; text-transform: uppercase;"
+                id="active-tab-label">Responsive Iframe Snippet</span>
               <button class="btn-copy-code" id="copy-code-btn">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -359,17 +361,19 @@
           </svg>
         </div>
         <h3 class="tech-title">Hardware Acceleration</h3>
-        <p class="tech-desc">GPU-accelerated video decoding pipeline delivers smooth 60fps playback with minimal battery and CPU usage.</p>
+        <p class="tech-desc">GPU-accelerated video decoding pipeline delivers smooth 60fps playback with minimal battery
+          and CPU usage.</p>
       </div>
 
       <div class="tech-box">
         <div class="tech-icon-wrap">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
           </svg>
         </div>
         <h3 class="tech-title">Universal Container Support</h3>
-        <p class="tech-desc">Plays Matroska (MKV), AVI, MP4, WebM, and MPEG-TS files instantly in-browser without server conversion.</p>
+        <p class="tech-desc">Plays Matroska (MKV), AVI, MP4, WebM, and MPEG-TS files instantly in-browser without server
+          conversion.</p>
       </div>
 
       <div class="tech-box">
@@ -380,7 +384,8 @@
           </svg>
         </div>
         <h3 class="tech-title">Universal Embed Link</h3>
-        <p class="tech-desc">Integrates effortlessly into WordPress, Webflow, custom CMS, or static sites using standalone responsive iframe parameters.</p>
+        <p class="tech-desc">Integrates effortlessly into WordPress, Webflow, custom CMS, or static sites using
+          standalone responsive iframe parameters.</p>
       </div>
 
       <div class="tech-box">
@@ -391,7 +396,8 @@
           </svg>
         </div>
         <h3 class="tech-title">Interactive API & Events</h3>
-        <p class="tech-desc">Comprehensive postMessage protocol allows embedding applications to control playback, volume, and listen to timeline changes.</p>
+        <p class="tech-desc">Comprehensive postMessage protocol allows embedding applications to control playback,
+          volume, and listen to timeline changes.</p>
       </div>
     </section>
   </main>
@@ -412,7 +418,9 @@
       </div>
       <div class="modal-body">
         <div class="modal-iframe-frame">
-          <iframe id="modal-sandbox-iframe" title="Sandbox Iframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+          <iframe id="modal-sandbox-iframe" title="Sandbox Iframe"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowfullscreen></iframe>
         </div>
         <div class="modal-remote-controls">
           <button class="pill-ctrl" id="modal-ctrl-play">Play</button>
@@ -432,7 +440,8 @@
       <div class="modal-bar">
         <div>
           <div class="modal-heading" id="info-modal-title">About VidEmbed</div>
-          <div style="font-size: 12.5px; color: var(--text-subtle); margin-top: 2px;" id="info-modal-subtitle">A high-performance universal media stream engine</div>
+          <div style="font-size: 12.5px; color: var(--text-subtle); margin-top: 2px;" id="info-modal-subtitle">A
+            high-performance universal media stream engine</div>
         </div>
         <button class="modal-close-btn" id="info-modal-close" aria-label="Close modal">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -441,7 +450,8 @@
           </svg>
         </button>
       </div>
-      <div class="modal-body" id="info-modal-content" style="font-size: 14px; line-height: 1.7; color: var(--text-muted); max-height: 60vh; overflow-y: auto;">
+      <div class="modal-body" id="info-modal-content"
+        style="font-size: 14px; line-height: 1.7; color: var(--text-muted); max-height: 60vh; overflow-y: auto;">
       </div>
     </div>
   </div>
@@ -451,7 +461,8 @@
       <div class="footer-top-row">
         <div class="footer-brand-copy">
           &copy; 2026 <strong>VidEmbed</strong>
-          <svg class="footer-verified-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="footer-verified-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9"
+            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
             <path d="m9 12 2 2 4-4"></path>
           </svg>
@@ -465,11 +476,13 @@
         </div>
       </div>
       <div class="footer-credit-row">
-        Designed &amp; Developed with <span class="heart-symbol">&#10084;&#65039;</span> by <a href="https://sumanonline.com" target="_blank" rel="noopener">SumanOnline.Com</a>
+        Designed &amp; Developed with <span class="heart-symbol">&#10084;&#65039;</span> by <a
+          href="https://sumanonline.com" target="_blank" rel="noopener">SumanOnline.Com</a>
       </div>
     </div>
   </footer>
 
   <script type="module" src="/src/main.ts"></script>
 </body>
+
 </html>

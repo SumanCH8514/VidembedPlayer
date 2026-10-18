@@ -179,7 +179,22 @@ function initStudio(): void {
     }, 2800);
   }
 
-  async function loadStream(syncUrl: boolean = true): Promise<void> {
+  function scrollToPlayer(): void {
+    if (window.innerWidth > 840) return;
+    const stage = document.querySelector(".studio-player-stage") || document.getElementById("auto-player-root");
+    if (!stage) return;
+    const navHeader = document.querySelector(".studio-nav-header") as HTMLElement | null;
+    const navHeight = navHeader ? navHeader.offsetHeight : 0;
+    const rect = stage.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const targetY = rect.top + scrollTop - navHeight - 10;
+    window.scrollTo({
+      top: Math.max(0, targetY),
+      behavior: "smooth"
+    });
+  }
+
+  async function loadStream(syncUrl: boolean = true, shouldScroll: boolean = false): Promise<void> {
     if (!currentId) {
       renderIdleState();
       return;
@@ -291,6 +306,9 @@ function initStudio(): void {
     activePlayer = new AutoPlayer(playerTarget, playerConfig);
 
     renderCode();
+    if (shouldScroll) {
+      setTimeout(() => scrollToPlayer(), 120);
+    }
   }
 
   function renderIdleState(): void {
@@ -380,7 +398,8 @@ function initStudio(): void {
     currentId = val;
     if (seasonInput) currentSeason = parseInt(seasonInput.value, 10) || 1;
     if (episodeInput) currentEpisode = parseInt(episodeInput.value, 10) || 1;
-    loadStream(true);
+    scrollToPlayer();
+    loadStream(true, true);
   });
 
   idInput?.addEventListener("keydown", (e) => {
@@ -404,7 +423,8 @@ function initStudio(): void {
       if (seasonInput && pS) seasonInput.value = pS;
       if (episodeInput && pE) episodeInput.value = pE;
 
-      loadStream();
+      scrollToPlayer();
+      loadStream(true, true);
     });
   });
 

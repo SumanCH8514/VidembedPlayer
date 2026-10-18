@@ -234,8 +234,13 @@ export class AutoPlayer {
             </div>
           </div>
 
+          <div class="ckin-settings-backdrop" id="settings-backdrop"></div>
           <div class="ckin-settings-popover" id="settings-popover">
             <div class="ckin-menu-page active" id="menu-page-main">
+              <div class="ckin-menu-header ckin-menu-header-main">
+                <span class="ckin-menu-header-title">Stream Settings</span>
+                <button class="ckin-menu-close-btn ckin-btn-close-popover" id="btn-close-settings" aria-label="Close settings">${SVG.close}</button>
+              </div>
               <div class="ckin-menu-section-title">STREAM &amp; SERVERS</div>
               <div class="ckin-menu-row" data-sub="servers">
                 <div class="ckin-menu-row-left">
@@ -333,49 +338,67 @@ export class AutoPlayer {
             </div>
 
             <div class="ckin-menu-page" id="menu-page-servers">
-              <div class="ckin-menu-header" data-back="main">
-                <button class="ckin-menu-back-btn">${SVG.chevronLeft}</button>
-                <span class="ckin-menu-header-title">Servers</span>
+              <div class="ckin-menu-header">
+                <button class="ckin-menu-back-btn" data-back="main" aria-label="Back to settings">
+                  ${SVG.chevronLeft}
+                  <span class="ckin-menu-header-title">Servers</span>
+                </button>
+                <button class="ckin-menu-close-btn ckin-btn-close-popover" aria-label="Close settings">${SVG.close}</button>
               </div>
               <div class="ckin-menu-list" id="menu-list-servers"></div>
             </div>
 
             <div class="ckin-menu-page" id="menu-page-quality">
-              <div class="ckin-menu-header" data-back="main">
-                <button class="ckin-menu-back-btn">${SVG.chevronLeft}</button>
-                <span class="ckin-menu-header-title">Quality</span>
+              <div class="ckin-menu-header">
+                <button class="ckin-menu-back-btn" data-back="main" aria-label="Back to settings">
+                  ${SVG.chevronLeft}
+                  <span class="ckin-menu-header-title">Quality</span>
+                </button>
+                <button class="ckin-menu-close-btn ckin-btn-close-popover" aria-label="Close settings">${SVG.close}</button>
               </div>
               <div class="ckin-menu-list" id="menu-list-quality"></div>
             </div>
 
             <div class="ckin-menu-page" id="menu-page-audio">
-              <div class="ckin-menu-header" data-back="main">
-                <button class="ckin-menu-back-btn">${SVG.chevronLeft}</button>
-                <span class="ckin-menu-header-title">Audio Track</span>
+              <div class="ckin-menu-header">
+                <button class="ckin-menu-back-btn" data-back="main" aria-label="Back to settings">
+                  ${SVG.chevronLeft}
+                  <span class="ckin-menu-header-title">Audio Track</span>
+                </button>
+                <button class="ckin-menu-close-btn ckin-btn-close-popover" aria-label="Close settings">${SVG.close}</button>
               </div>
               <div class="ckin-menu-list" id="menu-list-audio"></div>
             </div>
 
             <div class="ckin-menu-page" id="menu-page-subtitles">
-              <div class="ckin-menu-header" data-back="main">
-                <button class="ckin-menu-back-btn">${SVG.chevronLeft}</button>
-                <span class="ckin-menu-header-title">Subtitles</span>
+              <div class="ckin-menu-header">
+                <button class="ckin-menu-back-btn" data-back="main" aria-label="Back to settings">
+                  ${SVG.chevronLeft}
+                  <span class="ckin-menu-header-title">Subtitles</span>
+                </button>
+                <button class="ckin-menu-close-btn ckin-btn-close-popover" aria-label="Close settings">${SVG.close}</button>
               </div>
               <div class="ckin-menu-list" id="menu-list-subtitles"></div>
             </div>
 
             <div class="ckin-menu-page" id="menu-page-speed">
-              <div class="ckin-menu-header" data-back="main">
-                <button class="ckin-menu-back-btn">${SVG.chevronLeft}</button>
-                <span class="ckin-menu-header-title">Playback speed</span>
+              <div class="ckin-menu-header">
+                <button class="ckin-menu-back-btn" data-back="main" aria-label="Back to settings">
+                  ${SVG.chevronLeft}
+                  <span class="ckin-menu-header-title">Playback speed</span>
+                </button>
+                <button class="ckin-menu-close-btn ckin-btn-close-popover" aria-label="Close settings">${SVG.close}</button>
               </div>
               <div class="ckin-menu-list" id="menu-list-speed"></div>
             </div>
 
             <div class="ckin-menu-page" id="menu-page-aspect">
-              <div class="ckin-menu-header" data-back="main">
-                <button class="ckin-menu-back-btn">${SVG.chevronLeft}</button>
-                <span class="ckin-menu-header-title">Aspect</span>
+              <div class="ckin-menu-header">
+                <button class="ckin-menu-back-btn" data-back="main" aria-label="Back to settings">
+                  ${SVG.chevronLeft}
+                  <span class="ckin-menu-header-title">Aspect</span>
+                </button>
+                <button class="ckin-menu-close-btn ckin-btn-close-popover" aria-label="Close settings">${SVG.close}</button>
               </div>
               <div class="ckin-menu-list" id="menu-list-aspect"></div>
             </div>
@@ -1108,6 +1131,18 @@ export class AutoPlayer {
     if (target) target.classList.add("active");
   }
 
+  private openSettings(page = "main"): void {
+    this.showSettingsPage(page);
+    this.settingsPopover.classList.add("visible");
+    this.bigPlayBtn.classList.add("hidden-for-settings");
+  }
+
+  private closeSettings(): void {
+    this.settingsPopover.classList.remove("visible");
+    this.bigPlayBtn.classList.remove("hidden-for-settings");
+    this.resetHideTimer();
+  }
+
   private applyQualityChange(quality: string): void {
     this.activeQuality = quality;
 
@@ -1331,11 +1366,22 @@ export class AutoPlayer {
       e.stopPropagation();
       const isVisible = this.settingsPopover.classList.contains("visible");
       if (isVisible) {
-        this.settingsPopover.classList.remove("visible");
+        this.closeSettings();
       } else {
-        this.showSettingsPage("main");
-        this.settingsPopover.classList.add("visible");
+        this.openSettings("main");
       }
+    });
+
+    document.querySelectorAll(".ckin-btn-close-popover").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.closeSettings();
+      });
+    });
+
+    document.getElementById("settings-backdrop")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.closeSettings();
     });
 
     document.addEventListener("click", (e) => {
@@ -1344,7 +1390,7 @@ export class AutoPlayer {
         !this.settingsPopover.contains(e.target as Node) &&
         !this.settingsBtn.contains(e.target as Node)
       ) {
-        this.settingsPopover.classList.remove("visible");
+        this.closeSettings();
       }
     });
 
@@ -1357,9 +1403,9 @@ export class AutoPlayer {
       });
     });
 
-    const backHeaders = document.querySelectorAll<HTMLElement>(".ckin-menu-header[data-back]");
-    backHeaders.forEach((hdr) => {
-      hdr.addEventListener("click", (e) => {
+    const backBtns = document.querySelectorAll<HTMLElement>(".ckin-menu-back-btn");
+    backBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         e.stopPropagation();
         this.showSettingsPage("main");
       });
@@ -1387,8 +1433,7 @@ export class AutoPlayer {
     document.getElementById("btn-pip")?.addEventListener("click", () => this.togglePiP());
 
     document.getElementById("auto-watermark-pill")?.addEventListener("click", () => {
-      this.showSettingsPage("servers");
-      this.settingsPopover.classList.add("visible");
+      this.openSettings("servers");
     });
 
     this.bindScrubEvents();
@@ -1445,32 +1490,85 @@ export class AutoPlayer {
   }
 
   private bindGestures(): void {
-    const leftTouch = document.getElementById("touch-left");
-    const rightTouch = document.getElementById("touch-right");
     const vp = document.getElementById("auto-vp")!;
 
-    let lastTapLeft = 0;
-    leftTouch?.addEventListener("click", () => {
-      const now = Date.now();
-      if (now - lastTapLeft < 300) {
-        this.seekRelative(-10);
-        this.triggerRipple("left");
-      } else {
-        this.toggleChromeVisibility();
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let lastTapTime = 0;
+    let lastTapZone: "left" | "right" | null = null;
+    let lastTouchEndTime = 0;
+
+    const handleTap = (clientX: number, clientY: number, target: HTMLElement | null) => {
+      if (target && target.closest(".ckin-btn, .ckin-scrub-bar, .ckin-settings-popover, .ckin-switch, input, button")) {
+        return;
       }
-      lastTapLeft = now;
+
+      const rect = vp.getBoundingClientRect();
+      const relX = clientX - rect.left;
+      const zone: "left" | "right" = relX < rect.width / 2 ? "left" : "right";
+      const now = Date.now();
+
+      if (now - lastTapTime < 320 && lastTapZone === zone) {
+        lastTapTime = 0;
+        lastTapZone = null;
+        if (zone === "left") {
+          this.seekRelative(-10);
+          this.triggerRipple("left");
+        } else {
+          this.seekRelative(10);
+          this.triggerRipple("right");
+        }
+        this.uiChrome.classList.remove("hidden");
+        this.resetHideTimer();
+        return;
+      }
+
+      lastTapTime = now;
+      lastTapZone = zone;
+
+      if (this.settingsPopover.classList.contains("visible")) {
+        this.closeSettings();
+        return;
+      }
+
+      if (this.uiChrome.classList.contains("hidden")) {
+        this.uiChrome.classList.remove("hidden");
+        this.resetHideTimer();
+      } else {
+        this.uiChrome.classList.add("hidden");
+      }
+    };
+
+    vp.addEventListener("touchstart", (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchStartTime = Date.now();
+    }, { passive: true });
+
+    vp.addEventListener("touchend", (e: TouchEvent) => {
+      if (e.changedTouches.length !== 1) return;
+      const t = e.changedTouches[0];
+      const deltaX = Math.abs(t.clientX - touchStartX);
+      const deltaY = Math.abs(t.clientY - touchStartY);
+      const duration = Date.now() - touchStartTime;
+
+      if (duration > 400 || deltaX > 18 || deltaY > 18) {
+        return;
+      }
+
+      lastTouchEndTime = Date.now();
+      const target = document.elementFromPoint(t.clientX, t.clientY) as HTMLElement | null;
+      handleTap(t.clientX, t.clientY, target);
     });
 
-    let lastTapRight = 0;
-    rightTouch?.addEventListener("click", () => {
-      const now = Date.now();
-      if (now - lastTapRight < 300) {
-        this.seekRelative(10);
-        this.triggerRipple("right");
-      } else {
-        this.toggleChromeVisibility();
+    vp.addEventListener("click", (e: MouseEvent) => {
+      if (Date.now() - lastTouchEndTime < 450) {
+        return;
       }
-      lastTapRight = now;
+      handleTap(e.clientX, e.clientY, e.target as HTMLElement | null);
     });
 
     let lastMouseMove = 0;
@@ -1496,7 +1594,7 @@ export class AutoPlayer {
       this.resetHideTimer();
     } else {
       this.uiChrome.classList.add("hidden");
-      this.settingsPopover.classList.remove("visible");
+      this.closeSettings();
     }
   }
 

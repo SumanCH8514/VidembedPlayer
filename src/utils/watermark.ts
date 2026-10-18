@@ -15,26 +15,26 @@ export function attachFullscreenWatermark(player: HTMLElement): void {
     style.textContent = `
       .vidembed-fs-watermark {
         position: absolute;
-        top: max(14px, env(safe-area-inset-top));
-        right: max(16px, env(safe-area-inset-right));
+        top: max(12px, env(safe-area-inset-top));
+        right: max(14px, env(safe-area-inset-right));
         z-index: 2147483647;
         display: flex;
         align-items: center;
-        gap: 9px;
-        padding: 6px 14px 6px 9px;
-        background: rgba(8, 12, 22, 0.78);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(255, 255, 255, 0.18);
+        gap: 7px;
+        padding: 5px 12px 5px 8px;
+        background: rgba(8, 12, 22, 0.72);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 9999px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
         color: #ffffff;
         font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
         text-decoration: none;
         user-select: none;
         pointer-events: auto;
         cursor: pointer;
-        opacity: 0.92;
+        opacity: 0.9;
         transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease, border-color 0.2s ease;
       }
       .vidembed-fs-watermark:hover {
@@ -42,12 +42,12 @@ export function attachFullscreenWatermark(player: HTMLElement): void {
         background: rgba(14, 20, 36, 0.92);
         border-color: rgba(99, 102, 241, 0.6);
         transform: translateY(-1px);
-        box-shadow: 0 6px 24px rgba(99, 102, 241, 0.35);
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
       }
       .vidembed-fs-logo {
-        width: 22px;
-        height: 22px;
-        border-radius: 7px;
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
         background: linear-gradient(135deg, #6366f1, #06b6d4);
         display: flex;
         align-items: center;
@@ -56,8 +56,8 @@ export function attachFullscreenWatermark(player: HTMLElement): void {
         flex-shrink: 0;
       }
       .vidembed-fs-logo svg {
-        width: 13px;
-        height: 13px;
+        width: 12px;
+        height: 12px;
         fill: #ffffff;
       }
       .vidembed-fs-text {
@@ -66,7 +66,7 @@ export function attachFullscreenWatermark(player: HTMLElement): void {
         line-height: 1.1;
       }
       .vidembed-fs-name {
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 800;
         letter-spacing: -0.02em;
         color: #ffffff;
@@ -78,21 +78,89 @@ export function attachFullscreenWatermark(player: HTMLElement): void {
         -webkit-text-fill-color: transparent;
       }
       .vidembed-fs-sub {
-        font-size: 9px;
+        font-size: 8.5px;
         font-weight: 700;
         letter-spacing: 0.05em;
         text-transform: uppercase;
         color: #94a3b8;
-        margin-top: 2px;
+        margin-top: 1px;
+      }
+      .movi-title-bar {
+        padding-right: 130px !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .movi-title-text {
+        max-width: 100% !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        display: block !important;
       }
       @media (max-width: 640px) {
         .vidembed-fs-watermark {
-          top: max(10px, env(safe-area-inset-top));
-          right: max(10px, env(safe-area-inset-right));
-          padding: 5px 11px 5px 8px;
+          top: max(8px, env(safe-area-inset-top));
+          right: max(8px, env(safe-area-inset-right));
+          padding: 3.5px 8px 3.5px 6px;
+          gap: 5px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        }
+        .vidembed-fs-logo {
+          width: 16px;
+          height: 16px;
+          border-radius: 5px;
+        }
+        .vidembed-fs-logo svg {
+          width: 10px;
+          height: 10px;
+        }
+        .vidembed-fs-name {
+          font-size: 11px;
+          font-weight: 700;
         }
         .vidembed-fs-sub {
           display: none;
+        }
+        .movi-title-bar {
+          padding-right: 88px !important;
+          padding-left: 10px !important;
+          top: 6px !important;
+        }
+        .movi-title-text {
+          font-size: 11.5px !important;
+          max-width: 100% !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          white-space: nowrap !important;
+        }
+      }
+      @media (max-width: 400px) {
+        .vidembed-fs-watermark {
+          top: max(6px, env(safe-area-inset-top));
+          right: max(6px, env(safe-area-inset-right));
+          padding: 3px 7px 3px 5px;
+          gap: 4px;
+        }
+        .vidembed-fs-logo {
+          width: 14px;
+          height: 14px;
+          border-radius: 4px;
+        }
+        .vidembed-fs-logo svg {
+          width: 9px;
+          height: 9px;
+        }
+        .vidembed-fs-name {
+          font-size: 10px;
+        }
+        .movi-title-bar {
+          padding-right: 80px !important;
+          padding-left: 8px !important;
+          top: 5px !important;
+        }
+        .movi-title-text {
+          font-size: 10.5px !important;
         }
       }
     `;
