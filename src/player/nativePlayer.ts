@@ -1,4 +1,5 @@
 import "./nativePlayer.css";
+import { ScreenWakeLock } from "../utils/wakeLock";
 
 export interface NativePlayerOptions {
   src?: string;
@@ -72,6 +73,7 @@ export class NativeCkinPlayer {
   private ambientEnabled: boolean = false;
   private listeners: Map<string, Set<PlayerEventHandler>> = new Map();
   private lastTapTime: number = 0;
+  private wakeLock: ScreenWakeLock;
 
   constructor(target: string | HTMLElement, options: NativePlayerOptions = {}) {
     const el = typeof target === "string" ? document.querySelector<HTMLElement>(target) : target;
@@ -80,6 +82,7 @@ export class NativeCkinPlayer {
     }
     this.container = el;
     this.container.classList.add("ckin-container");
+    this.wakeLock = new ScreenWakeLock(() => !this.video.paused && !this.video.ended);
 
     if (options.accent) {
       this.container.style.setProperty("--accent-color", options.accent);
@@ -257,6 +260,7 @@ export class NativeCkinPlayer {
     this.playPauseBtn.addEventListener("click", () => this.togglePlay());
 
     this.video.addEventListener("play", () => {
+      this.wakeLock.request();
       this.playPauseBtn.innerHTML = SVG_ICONS.pause;
       this.playPauseBtn.setAttribute("aria-label", "Pause");
       this.bigPlayBtn.classList.add("playing");
@@ -267,6 +271,7 @@ export class NativeCkinPlayer {
     });
 
     this.video.addEventListener("pause", () => {
+      this.wakeLock.release();
       this.playPauseBtn.innerHTML = SVG_ICONS.play;
       this.playPauseBtn.setAttribute("aria-label", "Play");
       this.bigPlayBtn.classList.remove("playing");
@@ -279,6 +284,7 @@ export class NativeCkinPlayer {
     });
 
     this.video.addEventListener("playing", () => {
+      this.wakeLock.request();
       this.spinnerEl.classList.remove("active");
     });
 
@@ -319,6 +325,7 @@ export class NativeCkinPlayer {
     });
 
     this.video.addEventListener("ended", () => {
+      this.wakeLock.release();
       this.playPauseBtn.innerHTML = SVG_ICONS.play;
       this.bigPlayBtn.classList.remove("playing");
       this.showControls();
@@ -463,6 +470,9 @@ export class NativeCkinPlayer {
   private scheduleHideControls(): void {
     if (this.hideControlsTimer) clearTimeout(this.hideControlsTimer);
     this.hideControlsTimer = window.setTimeout(() => {
+      if (!this.video.paused) {
+        this.wakeLock.request();
+      }
       if (!this.video.paused && !this.isDraggingScrub && !this.speedMenu.classList.contains("open")) {
         this.hideControls();
       }
@@ -589,6 +599,7 @@ export class NativeCkinPlayer {
   }
 
   public destroy(): void {
+    this.wakeLock.destroy();
     if (this.animFrameId) cancelAnimationFrame(this.animFrameId);
     if (this.hideControlsTimer) clearTimeout(this.hideControlsTimer);
     this.video.pause();

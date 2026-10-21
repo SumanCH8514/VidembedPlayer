@@ -11,6 +11,7 @@ import {
   fetchStreamHealth,
   fetchMediaDetails
 } from "./services/streamApi";
+import { ScreenWakeLock } from "../utils/wakeLock";
 
 const SVG = {
   play: `<svg viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></svg>`,
@@ -94,16 +95,19 @@ export class AutoPlayer {
   private isLoop: boolean = false;
   private playbackRate: number = 1;
   private fitMode: "contain" | "cover" | "fill" = "contain";
+  private wakeLock: ScreenWakeLock;
 
   constructor(target: HTMLElement, customConfig?: AutoPlayerConfig) {
     this.container = target;
     this.config = customConfig || this.parseConfig();
     this.fitMode = this.config.fit || "contain";
+    this.wakeLock = new ScreenWakeLock(() => this.shouldKeepScreenAlive());
     this.buildDOM();
     this.init();
   }
 
   public destroy(): void {
+    this.wakeLock.destroy();
     if (this.hideTimer) clearTimeout(this.hideTimer);
     if (this.hlsInstance) {
       this.hlsInstance.destroy();
@@ -130,6 +134,16 @@ export class AutoPlayer {
 
   public getSources(): StreamSource[] {
     return this.sources;
+  }
+
+  private shouldKeepScreenAlive(): boolean {
+    if (this.activeSource?.type === "embed" && this.embedIframe) {
+      return true;
+    }
+    if (this.videoEl && !this.videoEl.paused && !this.videoEl.ended) {
+      return true;
+    }
+    return false;
   }
 
   private parseConfig(): AutoPlayerConfig {
@@ -771,15 +785,25 @@ export class AutoPlayer {
     });
 
     video.addEventListener("play", () => {
+      this.wakeLock.request();
       this.playBtn.innerHTML = SVG.pause;
       this.bigPlayBtn.classList.add("playing");
       this.resetHideTimer();
     });
 
+    video.addEventListener("playing", () => {
+      this.wakeLock.request();
+    });
+
     video.addEventListener("pause", () => {
+      this.wakeLock.release();
       this.playBtn.innerHTML = SVG.play;
       this.bigPlayBtn.classList.remove("playing");
       this.uiChrome.classList.remove("hidden");
+    });
+
+    video.addEventListener("ended", () => {
+      this.wakeLock.release();
     });
 
     let timeUpdateRaf = 0;
@@ -841,15 +865,16 @@ export class AutoPlayer {
     const iframe = document.createElement("iframe");
     iframe.className = "auto-embed-iframe";
     iframe.src = embedUrl;
-    iframe.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-presentation");
     iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen";
     iframe.setAttribute("allowfullscreen", "true");
 
     this.embedIframe = iframe;
     this.videoEl = null;
     stage.appendChild(iframe);
+    this.wakeLock.request();
 
     iframe.onload = () => {
+      this.wakeLock.request();
       this.spinnerEl.classList.remove("visible");
       this.bigPlayBtn.classList.add("playing");
     };
@@ -1310,8 +1335,10 @@ export class AutoPlayer {
     if (!this.videoEl) return;
     if (this.videoEl.paused) {
       this.videoEl.play().catch(() => {});
+      this.wakeLock.request();
     } else {
       this.videoEl.pause();
+      this.wakeLock.release();
     }
   }
 
@@ -1581,6 +1608,10 @@ export class AutoPlayer {
         return;
       }
 
+      if (this.shouldKeepScreenAlive()) {
+        this.wakeLock.request();
+      }
+
       if (this.uiChrome.classList.contains("hidden")) {
         this.uiChrome.classList.remove("hidden");
         this.resetHideTimer();
@@ -1650,6 +1681,9 @@ export class AutoPlayer {
   private resetHideTimer(): void {
     if (this.hideTimer) clearTimeout(this.hideTimer);
     this.hideTimer = window.setTimeout(() => {
+      if (this.shouldKeepScreenAlive()) {
+        this.wakeLock.request();
+      }
       if (this.videoEl && !this.videoEl.paused && !this.settingsPopover.classList.contains("visible")) {
         this.uiChrome.classList.add("hidden");
       }
