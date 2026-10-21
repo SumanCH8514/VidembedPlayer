@@ -75,4 +75,5 @@ export interface AutoPlayerConfig {
   muted?: boolean;
   server?: string;
   fit?: "contain" | "cover" | "fill";
+  onServerChange?: (source: StreamSource) => void;
 }

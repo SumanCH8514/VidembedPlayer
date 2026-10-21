@@ -112,6 +112,20 @@ const CURATED_METADATA: Record<string, Partial<MediaMetadata>> = {
   }
 };
 
+export function sanitizeSourceBrand(url: string, brand: string = "SumanMovies"): string {
+  if (!url) return url;
+  try {
+    const parsed = new URL(url);
+    if (parsed.searchParams.has("brand") || /vidrift\.in/i.test(parsed.hostname)) {
+      parsed.searchParams.set("brand", brand);
+      return parsed.toString();
+    }
+  } catch {
+    return url.replace(/brand=thug[s]?tv/gi, `brand=${encodeURIComponent(brand)}`);
+  }
+  return url;
+}
+
 export async function fetchStreamSources(
   type: "movie" | "tv",
   id: string,
@@ -127,6 +141,14 @@ export async function fetchStreamSources(
       throw new Error(`Stream API error: ${res.status}`);
     }
     const data: StreamApiResponse = await res.json();
+    if (data && Array.isArray(data.sources)) {
+      data.sources = data.sources.map((s) => {
+        if (s.url) {
+          s.url = sanitizeSourceBrand(s.url);
+        }
+        return s;
+      });
+    }
     return data;
   } catch {
     return { sources: [], pending: false };

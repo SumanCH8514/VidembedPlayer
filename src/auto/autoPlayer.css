@@ -1156,3 +1156,118 @@ body.is-embed-mode {
     display: none !important;
   }
 }
+
+.auto-viewport.is-embed-source .ckin-controls {
+  display: none !important;
+}
+
+.auto-viewport.is-embed-source .auto-touch-overlay {
+  display: none !important;
+}
+
+.auto-viewport.is-embed-source .ckin-big-play {
+  display: none !important;
+}
+
+.ckin-top-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ckin-top-server-pill {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  background: rgba(10, 15, 30, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 5px 12px;
+  border-radius: 9999px;
+  border: 1px solid rgba(56, 189, 248, 0.32);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  font-family: var(--auto-font);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.18s ease;
+}
+
+.auto-viewport.is-embed-source .ckin-top-server-pill {
+  display: inline-flex !important;
+}
+
+.ckin-top-server-pill:hover {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.ckin-top-server-pill:active {
+  transform: scale(0.96);
+}
+
+.ckin-top-server-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  font-family: var(--auto-mono);
+}
+
+.ckin-top-server-name {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #38bdf8;
+  font-family: var(--auto-mono);
+  text-transform: uppercase;
+}
+
+.ckin-top-server-icon svg {
+  width: 13px;
+  height: 13px;
+  stroke: #38bdf8;
+  display: block;
+}
+
+.ckin-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  animation: ckinPulse 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
+  flex-shrink: 0;
+}
+
+@keyframes ckinPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+
+@media (max-width: 640px) {
+  .ckin-top-right {
+    gap: 6px;
+  }
+  .ckin-top-server-pill {
+    padding: 3.5px 8px;
+    gap: 5px;
+  }
+  .ckin-top-server-tag {
+    display: none;
+  }
+  .ckin-top-server-name {
+    font-size: 10.5px;
+  }
+  .ckin-top-server-icon svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+

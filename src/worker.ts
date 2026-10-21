@@ -36,7 +36,9 @@ export default {
         headers.set("Access-Control-Allow-Origin", "*");
         headers.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
         headers.set("Access-Control-Allow-Headers", "*");
-        return new Response(apiRes.body, {
+        const text = await apiRes.text();
+        const sanitized = text.replace(/brand=thug[s]?tv/gi, "brand=SumanMovies");
+        return new Response(sanitized, {
           status: apiRes.status,
           statusText: apiRes.statusText,
           headers

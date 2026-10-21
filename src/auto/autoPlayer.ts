@@ -225,11 +225,19 @@ export class AutoPlayer {
               <span class="ckin-badge" id="auto-badge" style="display: none;"></span>
             </div>
 
-            <div class="ckin-watermark" id="auto-watermark-pill">
-              <div class="ckin-watermark-icon">${SVG.watermark}</div>
-              <div class="ckin-watermark-text-col">
-                <div class="ckin-watermark-title"><span id="auto-brand-text">${brandMarkup}</span></div>
-                <div class="ckin-watermark-sub">A SUMANONLINE PROJECT</div>
+            <div class="ckin-top-right">
+              <button type="button" class="ckin-top-server-pill" id="btn-top-switch-server" title="Switch Server or Direct Fastly HLS">
+                <span class="ckin-pulse-dot"></span>
+                <span class="ckin-top-server-tag">SERVER:</span>
+                <span class="ckin-top-server-name" id="top-server-name">Toulouse</span>
+                <span class="ckin-top-server-icon">${SVG.server}</span>
+              </button>
+              <div class="ckin-watermark" id="auto-watermark-pill">
+                <div class="ckin-watermark-icon">${SVG.watermark}</div>
+                <div class="ckin-watermark-text-col">
+                  <div class="ckin-watermark-title"><span id="auto-brand-text">${brandMarkup}</span></div>
+                  <div class="ckin-watermark-sub">A SUMANONLINE PROJECT</div>
+                </div>
               </div>
             </div>
           </div>
@@ -426,7 +434,6 @@ export class AutoPlayer {
                   <span class="current" id="time-cur">00:00</span> / <span id="time-dur">00:00</span>
                 </div>
               </div>
-
               <div class="ckin-controls-right">
                 <button class="ckin-btn" id="btn-tune" aria-label="Stream Settings &amp; Servers" title="Quality, Servers &amp; Audio">${SVG.sliders}</button>
                 <button class="ckin-btn" id="btn-aspect" aria-label="Aspect Ratio" title="Aspect Ratio: Fit (Default)">${SVG.aspect}</button>
@@ -545,6 +552,20 @@ export class AutoPlayer {
 
   private loadSource(source: StreamSource): void {
     this.activeSource = source;
+    const vp = document.getElementById("auto-vp");
+    if (vp) {
+      if (source.type === "embed") {
+        vp.classList.add("is-embed-source");
+      } else {
+        vp.classList.remove("is-embed-source");
+      }
+    }
+
+    const topServerName = document.getElementById("top-server-name");
+    if (topServerName) {
+      topServerName.textContent = source.label || source.name;
+    }
+
     const stage = document.getElementById("auto-stage")!;
     stage.innerHTML = "";
     this.spinnerEl.classList.add("visible");
@@ -558,6 +579,11 @@ export class AutoPlayer {
     }
 
     this.updateSettingsPanel();
+
+    if (this.config.onServerChange) {
+      this.config.onServerChange(source);
+    }
+    this.container.dispatchEvent(new CustomEvent("serverchange", { detail: { source }, bubbles: true }));
   }
 
   private setupDirectVideo(source: StreamSource): void {
@@ -795,10 +821,27 @@ export class AutoPlayer {
   }
 
   private setupEmbedIframe(source: StreamSource): void {
+    if (this.hlsInstance) {
+      this.hlsInstance.destroy();
+      this.hlsInstance = null;
+    }
+    const targetBrand = this.config.brand || "SumanMovies";
+    let embedUrl = source.url;
+    try {
+      const parsed = new URL(embedUrl);
+      if (parsed.searchParams.has("brand") || /vidrift\.in/i.test(parsed.hostname)) {
+        parsed.searchParams.set("brand", targetBrand);
+        embedUrl = parsed.toString();
+      }
+    } catch {
+      embedUrl = embedUrl.replace(/brand=thug[s]?tv/gi, `brand=${encodeURIComponent(targetBrand)}`);
+    }
+
     const stage = document.getElementById("auto-stage")!;
     const iframe = document.createElement("iframe");
     iframe.className = "auto-embed-iframe";
-    iframe.src = source.url;
+    iframe.src = embedUrl;
+    iframe.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-presentation");
     iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen";
     iframe.setAttribute("allowfullscreen", "true");
 
@@ -910,7 +953,8 @@ export class AutoPlayer {
       btn.onclick = (e) => {
         e.stopPropagation();
         this.loadSource(s);
-        this.showSettingsPage("main");
+        this.closeSettings();
+        this.showToast(`Switched to ${s.label || s.name}`);
       };
       listEl.appendChild(btn);
     });
@@ -1431,6 +1475,11 @@ export class AutoPlayer {
 
     document.getElementById("btn-fs")?.addEventListener("click", () => this.toggleFullscreen());
     document.getElementById("btn-pip")?.addEventListener("click", () => this.togglePiP());
+
+    document.getElementById("btn-top-switch-server")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.openSettings("servers");
+    });
 
     document.getElementById("auto-watermark-pill")?.addEventListener("click", () => {
       this.openSettings("servers");

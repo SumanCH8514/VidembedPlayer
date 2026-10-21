@@ -269,8 +269,29 @@ function initStudio(): void {
       }
     }
 
+    const updateActiveServerTelemetry = (source: StreamSource) => {
+      if (teleServerEl) {
+        teleServerEl.textContent = source.label || source.name;
+      }
+      if (teleEngineEl) {
+        teleEngineEl.textContent = source.type === "hls" ? "Castle Native HLS" : "Multi-CDN Embed Engine";
+      }
+      if (teleAudioEl) {
+        if (source.audioStreams && source.audioStreams.length > 0) {
+          teleAudioEl.textContent = source.audioStreams.map((a) => a.label).join(", ");
+        } else if (source.type === "embed") {
+          teleAudioEl.textContent = "Integrated Embed Audio";
+        } else {
+          teleAudioEl.textContent = "Original Multi-Channel Stereo";
+        }
+      }
+      if (healthStreamEl) {
+        healthStreamEl.textContent = `Active: ${source.label || source.name} (${source.type === "hls" ? "Direct HLS 1080p" : "Fast Edge Fallback"})`;
+      }
+    };
+
     if (teleEngineEl) teleEngineEl.textContent = directCastle ? "Castle Native HLS" : "Multi-CDN Embed Engine";
-    if (teleServerEl) teleServerEl.textContent = directCastle ? "Castle Server 1" : (sources[0]?.name || "Toulouse");
+    if (teleServerEl) teleServerEl.textContent = directCastle ? "Castle Server 1" : "Connecting...";
     if (teleAudioEl) {
       if (directCastle?.audioStreams && directCastle.audioStreams.length > 0) {
         teleAudioEl.textContent = directCastle.audioStreams.map((a) => a.label).join(", ");
@@ -297,7 +318,10 @@ function initStudio(): void {
       color: currentColor,
       autoplay: currentAutoplay,
       muted: currentMuted,
-      fit: currentFit
+      fit: currentFit,
+      onServerChange: (source) => {
+        updateActiveServerTelemetry(source);
+      }
     };
 
     const playerTarget = document.getElementById("auto-player-root");
